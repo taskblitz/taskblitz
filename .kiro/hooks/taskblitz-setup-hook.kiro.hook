@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "TaskBlitz Windows Setup",
+  "description": "Monitors the Windows setup batch file and provides guidance on TaskBlitz development environment setup including Python, uv package manager, and MCP server testing",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "setup-windows.bat"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "The TaskBlitz Windows setup script has been modified. Please review the setup-windows.bat file and ensure it properly:\n1. Checks for and installs Python 3.12 if needed\n2. Installs the uv package manager via pip\n3. Tests MCP servers (fetch, filesystem, git) with uvx commands\n4. Provides clear user feedback and pause points\n5. Follows TaskBlitz development guidelines for environment setup\n6. Handles error cases gracefully (like missing Python)\n\nVerify the script aligns with TaskBlitz development requirements and suggest any improvements for the development workflow."
+  }
+}
