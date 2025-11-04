@@ -30,9 +30,9 @@ config.json
 Jw.txt
 setup-*.bat
 
-# SQL files with potentially sensitive data (uncomment if needed)
-# supabase-seed-data.sql
-# supabase-placeholder-users.sql
+# SQL files - not needed for deployment
+*.sql
+supabase-*.sql
 
 # IDE
 .vscode/
