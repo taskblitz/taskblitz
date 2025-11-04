@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -42,16 +42,7 @@ export function MyTasksManager() {
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-    if (connected && publicKey) {
-      fetchUserData()
-    } else {
-      setLoading(false)
-    }
-  }, [connected, publicKey])
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     if (!publicKey) return
     
     try {
@@ -113,7 +104,16 @@ export function MyTasksManager() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [publicKey])
+
+  useEffect(() => {
+    setMounted(true)
+    if (connected && publicKey) {
+      fetchUserData()
+    } else {
+      setLoading(false)
+    }
+  }, [connected, publicKey, fetchUserData])
 
   if (!mounted) {
     return (

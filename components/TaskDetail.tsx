@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import { ArrowLeft, Clock, Users, DollarSign, Calendar, User, MessageSquare } from 'lucide-react'
@@ -39,10 +39,10 @@ Example message: "Hi Elon! I wanted to share TaskBlitz.click - a new Solana-base
   workersCompleted: 23,
   submissionType: 'url' as const,
   requirements: [
-    'Must have X (Twitter) account',
-    'Account must be at least 30 days old',
-    'Must not be spam account',
-    'Must actually send the DM'
+    "Must have X (Twitter) account",
+    "Account must be at least 30 days old",
+    "Must not be spam account",
+    "Must actually send the DM"
   ],
   exampleSubmission: 'https://x.com/messages/compose?recipient_id=44196397'
 }
@@ -60,12 +60,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
   const [submitting, setSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-    fetchTask()
-  }, [taskId])
-
-  const fetchTask = async () => {
+  const fetchTask = useCallback(async () => {
     try {
       setLoading(true)
       const data = await getTaskById(taskId)
@@ -98,7 +93,12 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [taskId])
+
+  useEffect(() => {
+    setMounted(true)
+    fetchTask()
+  }, [taskId, fetchTask])
 
   const difficultyColors = {
     Easy: 'text-green-400 bg-green-400/20',
@@ -209,7 +209,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
         <div className="glass-card p-8 text-center">
           <h2 className="text-xl font-semibold mb-4">Task Not Found</h2>
           <p className="text-text-secondary mb-6">
-            The task you're looking for doesn't exist or has been removed.
+            The task you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Link href="/" className="gradient-primary text-white px-6 py-3 rounded-lg hover:scale-105 transition-transform inline-block">
             Back to Marketplace
@@ -228,7 +228,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
               <span className="text-sm px-3 py-1 rounded-full bg-purple-500/20 text-purple-300">
                 {task.category}
               </span>
-              <span className={`text-sm px-3 py-1 rounded-full ${difficultyColors[task.difficulty]}`}>
+              <span className={`text-sm px-3 py-1 rounded-full ${difficultyColors[task.difficulty as keyof typeof difficultyColors] || difficultyColors.Easy}`}>
                 {task.difficulty}
               </span>
             </div>
@@ -238,7 +238,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
               <div className="flex items-center">
                 <User className="w-4 h-4 mr-2" />
-                <span>by @{task.postedBy}</span>
+                <span>by @{task.postedBy.length > 15 ? task.postedBy.substring(0, 15) + '...' : task.postedBy}</span>
               </div>
               <div className="flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -332,7 +332,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
         <div className="glass-card p-8">
           <h2 className="text-xl font-semibold mb-4">Requirements</h2>
           <ul className="space-y-2">
-            {task.requirements.map((req, index) => (
+            {task.requirements.map((req: string, index: number) => (
               <li key={index} className="flex items-start">
                 <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 mr-3 flex-shrink-0" />
                 <span className="text-text-secondary">{req}</span>

@@ -66,7 +66,7 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
           
           <div className="flex items-center space-x-4 text-sm text-text-secondary mb-3">
             <span className="text-green-400 font-medium">${submission.taskPayment}</span>
-            <span>by @{submission.taskPoster}</span>
+            <span>by @{submission.taskPoster?.length > 12 ? submission.taskPoster.substring(0, 12) + '...' : submission.taskPoster}</span>
             <div className="flex items-center">
               <Clock className="w-3 h-3 mr-1" />
               <span>{formatTimeAgo(submission.submittedAt)}</span>

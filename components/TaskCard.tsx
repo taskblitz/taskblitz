@@ -102,8 +102,8 @@ export function TaskCard({ task }: TaskCardProps) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="text-xs text-text-muted">
-          by <span className="text-purple-300">@{task.postedBy}</span>
+        <div className="text-xs text-text-muted truncate mr-2">
+          by <span className="text-purple-300">@{task.postedBy.length > 12 ? task.postedBy.substring(0, 12) + '...' : task.postedBy}</span>
         </div>
         {task.status === 'open' && task.workersCompleted < task.workersNeeded ? (
           <Link 

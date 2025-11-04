@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { TaskCard } from './TaskCard'
 import { Loader2 } from 'lucide-react'
 import { getAllTasks } from '@/lib/database'
@@ -17,7 +17,7 @@ export function TaskGrid({ filters }: TaskGridProps) {
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('newest')
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true)
       console.log('Fetching tasks with filters:', filters, 'sortBy:', sortBy)
@@ -58,11 +58,11 @@ export function TaskGrid({ filters }: TaskGridProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters, sortBy])
 
   useEffect(() => {
     fetchTasks()
-  }, [filters, sortBy])
+  }, [filters, sortBy, fetchTasks])
 
   // Test connection on mount
   useEffect(() => {

@@ -32,7 +32,7 @@ export function Hero() {
           <p className="text-xl sm:text-2xl text-text-secondary mb-12 max-w-3xl mx-auto">
             Post tasks, complete work, get paid instantly in crypto. 
             <br className="hidden sm:block" />
-            <strong className="text-white">10% fees</strong> vs MTurk's 40%. <strong className="text-white">Instant payments</strong> vs 7+ day delays.
+            <strong className="text-white">10% fees</strong> vs MTurk&apos;s 40%. <strong className="text-white">Instant payments</strong> vs 7+ day delays.
           </p>
 
           {/* CTA Buttons */}
@@ -76,7 +76,7 @@ export function Hero() {
             <div className="glass-card p-6 text-center">
               <Zap className="w-8 h-8 text-purple-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">Low Fees</h3>
-              <p className="text-text-secondary">Only 10% platform fee vs traditional platforms' 20-40%.</p>
+              <p className="text-text-secondary">Only 10% platform fee vs traditional platforms&apos; 20-40%.</p>
             </div>
             
             <div className="glass-card p-6 text-center">

@@ -159,7 +159,7 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
             <div key={submission.id} className="glass-card p-4 bg-white/5">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <p className="font-medium">@{submission.workerName}</p>
+                  <p className="font-medium">@{submission.workerName?.length > 15 ? submission.workerName.substring(0, 15) + '...' : submission.workerName}</p>
                   <p className="text-xs text-text-muted">
                     Submitted {formatTimeAgo(submission.submittedAt)}
                   </p>
