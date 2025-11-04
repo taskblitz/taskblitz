@@ -9,12 +9,30 @@ yarn-error.log*
 out/
 build/
 
-# Environment variables
+# Environment variables - NEVER COMMIT THESE!
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.local.example
+
+# Supabase sensitive files
+supabase/.env
+.supabase/
+
+# Database and API keys
+*.key
+*.pem
+config.json
+
+# Personal/temporary files
+Jw.txt
+setup-*.bat
+
+# SQL files with potentially sensitive data (uncomment if needed)
+# supabase-seed-data.sql
+# supabase-placeholder-users.sql
 
 # IDE
 .vscode/
