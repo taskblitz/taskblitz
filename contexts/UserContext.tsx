@@ -35,6 +35,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const mockUser = {
         id: 'mock-user-id',
         wallet_address: publicKey.toString(),
+        username: null,
+        username_last_changed: null,
         role: 'both' as const,
         total_spent: 0,
         total_earned: 0,
