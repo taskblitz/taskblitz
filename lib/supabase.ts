@@ -13,6 +13,8 @@ export interface Database {
         Row: {
           id: string
           wallet_address: string
+          username: string | null
+          username_last_changed: string | null
           role: 'requester' | 'worker' | 'both'
           total_spent: number
           total_earned: number
@@ -25,6 +27,8 @@ export interface Database {
         Insert: {
           id?: string
           wallet_address: string
+          username?: string | null
+          username_last_changed?: string | null
           role?: 'requester' | 'worker' | 'both'
           total_spent?: number
           total_earned?: number
@@ -37,6 +41,8 @@ export interface Database {
         Update: {
           id?: string
           wallet_address?: string
+          username?: string | null
+          username_last_changed?: string | null
           role?: 'requester' | 'worker' | 'both'
           total_spent?: number
           total_earned?: number

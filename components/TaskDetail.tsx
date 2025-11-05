@@ -74,7 +74,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
         category: data.category,
         difficulty: 'Easy', // We'll add this field later
         timeEstimate: '1-2 hours', // We'll add this field later
-        postedBy: data.requester?.wallet_address || 'unknown',
+        postedBy: data.requester?.username || data.requester?.wallet_address || 'unknown',
         postedAt: new Date(data.created_at),
         deadline: new Date(data.deadline),
         status: data.status,
@@ -238,7 +238,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
               <div className="flex items-center">
                 <User className="w-4 h-4 mr-2" />
-                <span>by @{task.postedBy.length > 15 ? task.postedBy.substring(0, 15) + '...' : task.postedBy}</span>
+                <span>by @{task.postedBy}</span>
               </div>
               <div className="flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />

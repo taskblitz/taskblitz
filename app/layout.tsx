@@ -1,11 +1,17 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Montserrat } from 'next/font/google'
 import './globals.css'
 import { WalletContextProvider } from '@/components/WalletProvider'
 import { UserProvider } from '@/contexts/UserContext'
 import { Toaster } from 'react-hot-toast'
+import { AnnouncementBanner } from '@/components/AnnouncementBanner'
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  variable: '--font-montserrat'
+})
 
 export const metadata: Metadata = {
   title: 'TaskBlitz - Solana Micro-Task Marketplace',
@@ -20,10 +26,39 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen`}>
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-VEQEWSTFR0"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-VEQEWSTFR0');
+          `}
+        </Script>
+
+        {/* Microsoft Clarity */}
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "u0chwbt0t4");
+          `}
+        </Script>
+      </head>
+      <body className={`${inter.className} ${montserrat.variable} min-h-screen`}>
         <WalletContextProvider>
           <UserProvider>
-            {children}
+            <AnnouncementBanner />
+            <div className="pt-12"> {/* Add padding-top for fixed banner */}
+              {children}
+            </div>
             <Toaster 
               position="top-right"
               toastOptions={{

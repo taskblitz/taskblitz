@@ -7,6 +7,18 @@ type User = Database['public']['Tables']['users']['Row']
 type Submission = Database['public']['Tables']['submissions']['Row']
 type SubmissionInsert = Database['public']['Tables']['submissions']['Insert']
 
+// Generate a random username
+function generateUsername(): string {
+  const adjectives = ['Cool', 'Smart', 'Fast', 'Bright', 'Bold', 'Swift', 'Clever', 'Sharp', 'Quick', 'Wise']
+  const nouns = ['Trader', 'Worker', 'Builder', 'Creator', 'Hunter', 'Solver', 'Maker', 'Finder', 'Helper', 'Doer']
+  const numbers = Math.floor(Math.random() * 999) + 1
+  
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
+  const noun = nouns[Math.floor(Math.random() * nouns.length)]
+  
+  return `${adjective}${noun}${numbers}`
+}
+
 // User Management
 export async function getOrCreateUser(walletAddress: string): Promise<User> {
   try {
@@ -34,6 +46,7 @@ export async function getOrCreateUser(walletAddress: string): Promise<User> {
       .from('users')
       .insert({
         wallet_address: walletAddress,
+        username: generateUsername(),
         role: 'both'
       })
       .select()
@@ -64,6 +77,80 @@ export async function getOrCreateUser(walletAddress: string): Promise<User> {
   }
 }
 
+export async function updateUsername(walletAddress: string, newUsername: string): Promise<boolean> {
+  try {
+    // Get current user to check cooldown
+    const { data: currentUser } = await supabase
+      .from('users')
+      .select('username_last_changed')
+      .eq('wallet_address', walletAddress)
+      .single()
+
+    if (currentUser?.username_last_changed) {
+      const lastChanged = new Date(currentUser.username_last_changed)
+      const now = new Date()
+      const daysSinceLastChange = (now.getTime() - lastChanged.getTime()) / (1000 * 60 * 60 * 24)
+      
+      if (daysSinceLastChange < 7) {
+        const daysLeft = Math.ceil(7 - daysSinceLastChange)
+        throw new Error(`You can only change your username once every 7 days. Try again in ${daysLeft} day${daysLeft > 1 ? 's' : ''}.`)
+      }
+    }
+
+    // Check if username is already taken
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', newUsername)
+      .neq('wallet_address', walletAddress)
+      .single()
+
+    if (existingUser) {
+      throw new Error('Username is already taken')
+    }
+
+    // Update username and timestamp
+    const { error } = await supabase
+      .from('users')
+      .update({ 
+        username: newUsername,
+        username_last_changed: new Date().toISOString()
+      })
+      .eq('wallet_address', walletAddress)
+
+    if (error) {
+      console.error('Error updating username:', error)
+      throw error
+    }
+
+    console.log('Username updated successfully')
+    return true
+  } catch (error) {
+    console.error('Exception in updateUsername:', error)
+    throw error
+  }
+}
+
+export async function getUserByWallet(walletAddress: string): Promise<User | null> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('wallet_address', walletAddress)
+      .single()
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching user:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('Exception in getUserByWallet:', error)
+    return null
+  }
+}
+
 // Task Management
 export async function getAllTasks(filters?: {
   categories?: string[]
@@ -74,7 +161,10 @@ export async function getAllTasks(filters?: {
   try {
     let query = supabase
       .from('tasks')
-      .select('*')
+      .select(`
+        *,
+        requester:users!tasks_requester_id_fkey(wallet_address, username)
+      `)
       .eq('status', 'open')
       .gt('deadline', new Date().toISOString())
 
@@ -127,7 +217,7 @@ export async function getTaskById(taskId: string) {
     .from('tasks')
     .select(`
       *,
-      requester:users!tasks_requester_id_fkey(wallet_address),
+      requester:users!tasks_requester_id_fkey(wallet_address, username),
       submissions(
         id,
         worker_id,
@@ -138,7 +228,7 @@ export async function getTaskById(taskId: string) {
         status,
         submitted_at,
         reviewed_at,
-        worker:users!submissions_worker_id_fkey(wallet_address)
+        worker:users!submissions_worker_id_fkey(wallet_address, username)
       )
     `)
     .eq('id', taskId)
@@ -219,7 +309,7 @@ export async function getTasksByRequester(walletAddress: string) {
       .from('tasks')
       .select(`
         *,
-        requester:users!tasks_requester_id_fkey(wallet_address),
+        requester:users!tasks_requester_id_fkey(wallet_address, username),
         submissions(
           id,
           worker_id,
@@ -230,7 +320,7 @@ export async function getTasksByRequester(walletAddress: string) {
           status,
           submitted_at,
           reviewed_at,
-          worker:users!submissions_worker_id_fkey(wallet_address)
+          worker:users!submissions_worker_id_fkey(wallet_address, username)
         )
       `)
       .eq('requester_id', user.id)

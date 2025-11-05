@@ -90,7 +90,9 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
               {task.status.replace('-', ' ')}
             </span>
           </div>
-          <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
+          <Link href={`/task/${task.id}`}>
+            <h3 className="text-lg font-semibold mb-2 hover:text-purple-300 transition-colors cursor-pointer">{task.title}</h3>
+          </Link>
           <div className="flex items-center space-x-4 text-sm text-text-secondary mb-3">
             <span>${task.paymentPerWorker} each</span>
             <div className="flex items-center">
@@ -159,7 +161,7 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
             <div key={submission.id} className="glass-card p-4 bg-white/5">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <p className="font-medium">@{submission.workerName?.length > 15 ? submission.workerName.substring(0, 15) + '...' : submission.workerName}</p>
+                  <p className="font-medium">@{submission.workerName}</p>
                   <p className="text-xs text-text-muted">
                     Submitted {formatTimeAgo(submission.submittedAt)}
                   </p>

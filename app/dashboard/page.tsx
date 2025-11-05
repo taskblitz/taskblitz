@@ -11,10 +11,14 @@ import {
   TrendingUp, 
   Users,
   Calendar,
-  Star
+  Star,
+  Edit3,
+  Save,
+  X
 } from 'lucide-react'
 import Link from 'next/link'
-import { getTasksByRequester, getSubmissionsByWorker } from '@/lib/database'
+import { getTasksByRequester, getSubmissionsByWorker, getUserByWallet, updateUsername } from '@/lib/database'
+import toast from 'react-hot-toast'
 
 export default function Dashboard() {
   const { connected, publicKey } = useWallet()
@@ -26,8 +30,12 @@ export default function Dashboard() {
     successRate: 0,
     totalSpent: 0
   })
+  const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const [editingUsername, setEditingUsername] = useState(false)
+  const [newUsername, setNewUsername] = useState('')
+  const [updatingUsername, setUpdatingUsername] = useState(false)
 
   const fetchDashboardData = useCallback(async () => {
     if (!publicKey) return
@@ -35,6 +43,11 @@ export default function Dashboard() {
     try {
       setLoading(true)
       const walletAddress = publicKey.toString()
+      
+      // Fetch user data
+      const userData = await getUserByWallet(walletAddress)
+      setUser(userData)
+      setNewUsername(userData?.username || '')
       
       // Fetch tasks posted by user
       const postedTasks = await getTasksByRequester(walletAddress)
@@ -72,6 +85,31 @@ export default function Dashboard() {
       setLoading(false)
     }
   }, [publicKey])
+
+  const handleUpdateUsername = async () => {
+    if (!publicKey || !newUsername.trim()) return
+    
+    try {
+      setUpdatingUsername(true)
+      await updateUsername(publicKey.toString(), newUsername.trim())
+      
+      // Update local user state
+      setUser((prev: any) => ({ ...prev, username: newUsername.trim() }))
+      setEditingUsername(false)
+      toast.success('Username updated successfully!')
+      
+    } catch (error: any) {
+      console.error('Error updating username:', error)
+      toast.error(error.message || 'Failed to update username')
+    } finally {
+      setUpdatingUsername(false)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setNewUsername(user?.username || '')
+    setEditingUsername(false)
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -125,8 +163,55 @@ export default function Dashboard() {
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-text-secondary">Track your TaskBlitz activity and earnings</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+              <p className="text-text-secondary">Track your TaskBlitz activity and earnings</p>
+            </div>
+            
+            {/* Username Editor */}
+            <div className="glass-card p-4">
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-text-muted">Username:</span>
+                {editingUsername ? (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="bg-transparent border border-white/20 rounded px-2 py-1 text-sm focus:border-purple-400 focus:outline-none"
+                      placeholder="Enter username"
+                      maxLength={20}
+                    />
+                    <button
+                      onClick={handleUpdateUsername}
+                      disabled={updatingUsername || !newUsername.trim()}
+                      className="p-1 text-green-400 hover:text-green-300 disabled:opacity-50"
+                    >
+                      <Save className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      disabled={updatingUsername}
+                      className="p-1 text-red-400 hover:text-red-300 disabled:opacity-50"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium">@{user?.username || 'Loading...'}</span>
+                    <button
+                      onClick={() => setEditingUsername(true)}
+                      className="p-1 text-purple-400 hover:text-purple-300"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {loading ? (

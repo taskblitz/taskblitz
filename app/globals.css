@@ -93,3 +93,26 @@
 .font-inter {
   font-family: 'Inter', sans-serif;
 }
+
+/* Announcement banner marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Montserrat font class */
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}

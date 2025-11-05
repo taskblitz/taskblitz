@@ -64,7 +64,7 @@ export function MyTasksManager() {
         category: task.category,
         difficulty: 'Easy', // We'll add this field later
         timeEstimate: '1-2 hours', // We'll add this field later
-        postedBy: task.requester?.wallet_address || walletAddress,
+        postedBy: task.requester?.username || task.requester?.wallet_address || 'You',
         postedAt: new Date(task.created_at),
         deadline: new Date(task.deadline),
         status: task.status,

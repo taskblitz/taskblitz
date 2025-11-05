@@ -47,7 +47,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           
           <div className="flex items-center space-x-4 text-sm text-text-secondary mb-3">
             <span className="text-green-400 font-medium">${application.taskReward}</span>
-            <span>by @{application.taskPoster?.length > 12 ? application.taskPoster.substring(0, 12) + '...' : application.taskPoster}</span>
+            <span>by @{application.taskPoster}</span>
             <div className="flex items-center">
               <Clock className="w-3 h-3 mr-1" />
               <span>{formatTimeAgo(application.appliedAt)}</span>

@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'montserrat': ['var(--font-montserrat)', 'sans-serif'],
+      },
       colors: {
         'purple-primary': '#8b5cf6',
         'purple-dark': '#7c3aed',
