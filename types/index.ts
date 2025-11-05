@@ -1,5 +1,9 @@
 // Re-export database types
-export type { User, Task, Submission, Transaction } from '@/lib/supabase'
+import type { Database } from '@/lib/supabase'
+
+export type User = Database['public']['Tables']['users']['Row']
+export type Task = Database['public']['Tables']['tasks']['Row']
+export type Submission = Database['public']['Tables']['submissions']['Row']
 
 // Component prop types
 export interface TaskCardProps {
