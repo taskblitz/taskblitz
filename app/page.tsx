@@ -5,8 +5,14 @@ import { TaskGrid } from '@/components/TaskGrid'
 import { MarketplaceFilters } from '@/components/MarketplaceFilters'
 import { MarketplaceStats } from '@/components/MarketplaceStats'
 
+interface Filters {
+  categories: string[]
+  difficulty: string[]
+  rewardRange: { min: string; max: string }
+}
+
 export default function Marketplace() {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     categories: [],
     difficulty: [],
     rewardRange: { min: '', max: '' }
