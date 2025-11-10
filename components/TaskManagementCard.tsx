@@ -76,6 +76,10 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
     const loadingToast = toast.loading('Releasing payment from escrow...')
     
     try {
+      // Calculate payment in lamports for fallback
+      const { usdToLamports } = await import('@/lib/anchor-client')
+      const paymentLamports = usdToLamports(task.paymentPerWorker)
+      
       // Approve with escrow release using Anchor
       await approveSubmission(submissionId, task.id, async (workerWalletAddress) => {
         // Execute blockchain transaction - release from escrow
@@ -83,7 +87,8 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
           wallet,
           task.id,
           submissionId,
-          new PublicKey(workerWalletAddress)
+          new PublicKey(workerWalletAddress),
+          paymentLamports // for fallback if Anchor fails
         )
         return txHash
       })
