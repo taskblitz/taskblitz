@@ -228,10 +228,10 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
                     </div>
 
                     {/* Right Section */}
-                    <div className="flex flex-col items-end justify-between min-w-[120px]">
-                      <div className="text-right mb-3">
-                        <div className="text-2xl font-bold text-green-400">
-                          ${task.paymentPerWorker}
+                    <div className="flex flex-col items-end justify-between min-w-[140px] text-right">
+                      <div className="mb-3">
+                        <div className="text-3xl font-bold text-green-400 tabular-nums">
+                          ${task.paymentPerWorker.toFixed(2)}
                         </div>
                         <div className="text-xs text-text-muted">per completion</div>
                       </div>
