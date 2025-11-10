@@ -542,24 +542,32 @@ export async function rejectSubmission(submissionId: string, taskId: string) {
 }
 
 export async function getSubmissionsByWorker(walletAddress: string) {
-  const { data, error } = await supabase
-    .from('submissions')
-    .select(`
-      *,
-      task:tasks(
-        id,
-        title,
-        payment_per_task,
-        requester:users!tasks_requester_id_fkey(wallet_address)
-      )
-    `)
-    .eq('worker.wallet_address', walletAddress)
-    .order('submitted_at', { ascending: false })
+  try {
+    // First get the user ID for this wallet
+    const user = await getOrCreateUser(walletAddress)
+    
+    const { data, error } = await supabase
+      .from('submissions')
+      .select(`
+        *,
+        task:tasks(
+          id,
+          title,
+          payment_per_task,
+          requester:users!tasks_requester_id_fkey(wallet_address)
+        )
+      `)
+      .eq('worker_id', user.id)
+      .order('submitted_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching worker submissions:', error)
-    throw error
+    if (error) {
+      console.error('Error fetching worker submissions:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception in getSubmissionsByWorker:', error)
+    return []
   }
-
-  return data || []
 }
