@@ -4,8 +4,10 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "env": {
-    "NEXT_PUBLIC_SOLANA_NETWORK": "devnet",
-    "NEXT_PUBLIC_PROGRAM_ID": "7UHcXx65GV3HP1VF24N8daSkqTuWMCXUeyCTNaMtQ4AE"
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_SOLANA_NETWORK": "devnet",
+      "NEXT_PUBLIC_PROGRAM_ID": "7UHcXx65GV3HP1VF24N8daSkqTuWMCXUeyCTNaMtQ4AE"
+    }
   }
 }
