@@ -1,6 +1,7 @@
 'use client'
 import { Clock, Users, DollarSign, Calendar } from 'lucide-react'
 import Link from 'next/link'
+import { TaskStatusBadge } from './TaskStatusBadge'
 
 interface Task {
   id: string
@@ -29,9 +30,12 @@ export function TaskCard({ task }: TaskCardProps) {
     Hard: 'text-red-400 bg-red-400/20'
   }
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string | undefined) => {
+    if (!date) return 'Unknown'
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (isNaN(dateObj.getTime())) return 'Unknown'
     const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    const diffInHours = Math.floor((now.getTime() - dateObj.getTime()) / (1000 * 60 * 60))
     
     if (diffInHours < 1) return 'Just posted'
     if (diffInHours < 24) return `${diffInHours}h ago`
@@ -42,13 +46,18 @@ export function TaskCard({ task }: TaskCardProps) {
   return (
     <div className="glass-card p-6 hover:bg-white/10 transition-all duration-200 group">
       <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-300">
             {task.category}
           </span>
           <span className={`text-xs px-2 py-1 rounded-full ${difficultyColors[task.difficulty]}`}>
             {task.difficulty}
           </span>
+          <TaskStatusBadge 
+            status={task.status}
+            workersCompleted={task.workersCompleted}
+            workersNeeded={task.workersNeeded}
+          />
         </div>
         <div className="text-right">
           <div className="flex items-center text-green-400 font-semibold">

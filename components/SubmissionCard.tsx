@@ -42,9 +42,12 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
   const config = statusConfig[submission.status]
   const StatusIcon = config.icon
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string | undefined) => {
+    if (!date) return 'Unknown'
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (isNaN(dateObj.getTime())) return 'Unknown'
     const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    const diffInHours = Math.floor((now.getTime() - dateObj.getTime()) / (1000 * 60 * 60))
     
     if (diffInHours < 1) return 'Just submitted'
     if (diffInHours < 24) return `${diffInHours}h ago`

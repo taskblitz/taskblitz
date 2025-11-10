@@ -4,6 +4,7 @@ import { Header } from '@/components/Header'
 import { TaskGrid } from '@/components/TaskGrid'
 import { MarketplaceFilters } from '@/components/MarketplaceFilters'
 import { MarketplaceStats } from '@/components/MarketplaceStats'
+import { QuickActions } from '@/components/QuickActions'
 
 interface Filters {
   categories: string[]
@@ -17,6 +18,7 @@ export default function Marketplace() {
     difficulty: [],
     rewardRange: { min: '', max: '' }
   })
+  const [searchQuery, setSearchQuery] = useState('')
 
   return (
     <main className="min-h-screen">
@@ -25,6 +27,17 @@ export default function Marketplace() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">TaskBlitz Marketplace</h1>
           <p className="text-text-secondary">Browse and complete micro-tasks, earn crypto instantly</p>
+          
+          {/* Search Bar */}
+          <div className="mt-6">
+            <input
+              type="text"
+              placeholder="🔍 Search tasks by title, description, or category..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full glass-card px-4 py-3 bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white placeholder-text-muted"
+            />
+          </div>
         </div>
         
         <MarketplaceStats />
@@ -34,10 +47,11 @@ export default function Marketplace() {
             <MarketplaceFilters onFiltersChange={setFilters} />
           </div>
           <div className="lg:col-span-3">
-            <TaskGrid filters={filters} />
+            <TaskGrid filters={filters} searchQuery={searchQuery} />
           </div>
         </div>
       </div>
+      <QuickActions />
     </main>
   )
 }

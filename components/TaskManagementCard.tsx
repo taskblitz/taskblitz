@@ -1,14 +1,18 @@
 'use client'
 import { useState } from 'react'
-import { Clock, Users, Eye, CheckCircle, XCircle, MessageSquare } from 'lucide-react'
+import { Clock, Users, Eye, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
-import { taskStore } from '@/lib/taskStore'
+import { approveSubmission, rejectSubmission } from '@/lib/database'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { approveSubmissionOnChain } from '@/lib/solana'
+import { PublicKey } from '@solana/web3.js'
 import toast from 'react-hot-toast'
 
 interface Submission {
   id: string
   workerId: string
   workerName: string
+  workerWallet?: string
   submissionType: 'text' | 'file' | 'url'
   submissionText?: string
   submissionFileUrl?: string
@@ -37,6 +41,7 @@ interface TaskManagementCardProps {
 
 export function TaskManagementCard({ task }: TaskManagementCardProps) {
   const [showSubmissions, setShowSubmissions] = useState(false)
+  const wallet = useWallet()
 
   const statusColors = {
     open: 'text-green-400 bg-green-400/20',
@@ -47,9 +52,14 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
 
   const pendingSubmissions = task.submissions.filter(sub => sub.status === 'pending')
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string | undefined) => {
+    if (!date) return 'Unknown'
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    if (isNaN(dateObj.getTime())) return 'Unknown'
+    
     const now = new Date()
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    const diffInHours = Math.floor((now.getTime() - dateObj.getTime()) / (1000 * 60 * 60))
     
     if (diffInHours < 1) return 'Just posted'
     if (diffInHours < 24) return `${diffInHours}h ago`
@@ -57,23 +67,53 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
     return `${diffInDays}d ago`
   }
 
-  const handleApproveSubmission = (submissionId: string) => {
-    const success = taskStore.approveSubmission(task.id, submissionId)
-    if (success) {
-      const submission = task.submissions.find(sub => sub.id === submissionId)
-      toast.success(`Approved submission from ${submission?.workerName}`)
-    } else {
-      toast.error('Failed to approve submission')
+  const handleApproveSubmission = async (submissionId: string, workerWallet: string) => {
+    if (!wallet.connected || !wallet.publicKey) {
+      toast.error('Please connect your wallet first')
+      return
+    }
+
+    const loadingToast = toast.loading('Processing payment on blockchain...')
+    
+    try {
+      // Calculate payment in lamports
+      const { usdToLamports } = await import('@/lib/solana')
+      const paymentLamports = usdToLamports(task.paymentPerWorker)
+      
+      // Approve with on-chain payment
+      await approveSubmission(submissionId, task.id, async (workerWalletAddress) => {
+        // Execute blockchain transaction
+        const txHash = await approveSubmissionOnChain(
+          wallet,
+          task.id,
+          submissionId,
+          new PublicKey(workerWalletAddress),
+          paymentLamports
+        )
+        return txHash
+      })
+      
+      toast.dismiss(loadingToast)
+      toast.success(`✅ Approved! Payment of $${task.paymentPerWorker} sent on-chain.`)
+      
+      // Refresh the page to show updated status
+      setTimeout(() => window.location.reload(), 1500)
+    } catch (error: any) {
+      toast.dismiss(loadingToast)
+      console.error('Error approving submission:', error)
+      toast.error(error.message || 'Failed to approve submission')
     }
   }
 
-  const handleRejectSubmission = (submissionId: string) => {
-    const success = taskStore.rejectSubmission(task.id, submissionId)
-    if (success) {
-      const submission = task.submissions.find(sub => sub.id === submissionId)
-      toast.success(`Rejected submission from ${submission?.workerName}`)
-    } else {
-      toast.error('Failed to reject submission')
+  const handleRejectSubmission = async (submissionId: string) => {
+    try {
+      await rejectSubmission(submissionId, task.id)
+      toast.success(`❌ Submission rejected. Spot reopened.`)
+      // Refresh the page to show updated status
+      window.location.reload()
+    } catch (error: any) {
+      console.error('Error rejecting submission:', error)
+      toast.error(error.message || 'Failed to reject submission')
     }
   }
 
@@ -205,7 +245,7 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
               {submission.status === 'pending' && (
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleApproveSubmission(submission.id)}
+                    onClick={() => handleApproveSubmission(submission.id, submission.workerWallet || '')}
                     className="flex items-center text-green-400 hover:text-green-300 transition-colors text-sm"
                   >
                     <CheckCircle className="w-4 h-4 mr-1" />

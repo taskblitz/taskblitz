@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { TaskCard } from './TaskCard'
-import { Loader2 } from 'lucide-react'
+import { TaskGridSkeleton } from './LoadingSkeleton'
 import { getAllTasks } from '@/lib/database'
 
 interface TaskGridProps {
@@ -10,9 +10,10 @@ interface TaskGridProps {
     difficulty: string[]
     rewardRange: { min: string; max: string }
   }
+  searchQuery?: string
 }
 
-export function TaskGrid({ filters }: TaskGridProps) {
+export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
   const [tasks, setTasks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('newest')
@@ -51,18 +52,30 @@ export function TaskGrid({ filters }: TaskGridProps) {
       }))
       
       console.log('Transformed tasks:', transformedTasks)
-      setTasks(transformedTasks)
+      
+      // Apply search filter
+      let filteredTasks = transformedTasks
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase()
+        filteredTasks = transformedTasks.filter(task => 
+          task.title.toLowerCase().includes(query) ||
+          task.description.toLowerCase().includes(query) ||
+          task.category.toLowerCase().includes(query)
+        )
+      }
+      
+      setTasks(filteredTasks)
     } catch (error) {
       console.error('Error fetching tasks:', error)
       setTasks([])
     } finally {
       setLoading(false)
     }
-  }, [filters, sortBy])
+  }, [filters, sortBy, searchQuery])
 
   useEffect(() => {
     fetchTasks()
-  }, [filters, sortBy, fetchTasks])
+  }, [filters, sortBy, searchQuery, fetchTasks])
 
   // Test connection on mount
   useEffect(() => {
@@ -72,10 +85,23 @@ export function TaskGrid({ filters }: TaskGridProps) {
   }, [])
 
   if (loading) {
+    return <TaskGridSkeleton />
+  }
+
+  if (tasks.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
-        <span className="ml-2 text-text-secondary">Loading tasks...</span>
+      <div className="glass-card p-12 text-center">
+        <div className="text-6xl mb-4">🔍</div>
+        <h3 className="text-xl font-semibold mb-2">No Tasks Found</h3>
+        <p className="text-text-secondary mb-6">
+          {searchQuery ? `No tasks match &quot;${searchQuery}&quot;` : 'No tasks match your current filters.'}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="gradient-primary text-white px-6 py-2 rounded-lg hover:scale-105 transition-transform"
+        >
+          Clear All Filters
+        </button>
       </div>
     )
   }
@@ -83,7 +109,10 @@ export function TaskGrid({ filters }: TaskGridProps) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <p className="text-text-secondary">{tasks.length} tasks available</p>
+        <p className="text-text-secondary">
+          {tasks.length} task{tasks.length !== 1 ? 's' : ''} found
+          {searchQuery && <span className="text-purple-400"> for &quot;{searchQuery}&quot;</span>}
+        </p>
         <select 
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}

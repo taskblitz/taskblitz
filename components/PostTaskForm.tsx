@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { DollarSign, Clock, FileText, Upload, Plus, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createTask } from '@/lib/database'
+import { createTaskOnChain } from '@/lib/solana'
 import { useUser } from '@/contexts/UserContext'
 
 interface TaskFormData {
@@ -22,7 +23,8 @@ interface TaskFormData {
 }
 
 export function PostTaskForm() {
-  const { connected, publicKey } = useWallet()
+  const wallet = useWallet()
+  const { connected, publicKey } = wallet
   const { user } = useUser()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -119,9 +121,11 @@ export function PostTaskForm() {
     if (!validateForm()) return
 
     setLoading(true)
+    const loadingToast = toast.loading('Creating task...')
     
     try {
       if (!publicKey) {
+        toast.dismiss(loadingToast)
         toast.error('Wallet not connected')
         return
       }
@@ -129,13 +133,16 @@ export function PostTaskForm() {
       // Filter out empty requirements
       const cleanRequirements = formData.requirements.filter(req => req.trim() !== '')
       
-      // Create task in database
+      const paymentPerWorker = parseFloat(formData.paymentPerWorker)
+      const workersNeeded = parseInt(formData.workersNeeded)
+      
+      // Create task in database (no escrow payment for MVP)
       const newTask = await createTask({
         title: formData.title.trim(),
         description: formData.description.trim(),
         category: formData.category,
-        paymentPerWorker: parseFloat(formData.paymentPerWorker),
-        workersNeeded: parseInt(formData.workersNeeded),
+        paymentPerWorker,
+        workersNeeded,
         timeEstimate: formData.timeEstimate,
         submissionType: formData.submissionType,
         requesterWallet: publicKey.toString(),
@@ -143,13 +150,21 @@ export function PostTaskForm() {
         exampleSubmission: formData.exampleSubmission.trim() || undefined
       })
       
+      // Note: For MVP, we skip escrow at creation
+      // Payment happens when you approve submissions
+      // This avoids double-payment issue
+      
       console.log('Task posted successfully:', newTask)
       
-      toast.success('Task posted successfully!')
-      router.push('/')
-    } catch (error) {
+      toast.dismiss(loadingToast)
+      toast.success('✅ Task posted! You\'ll pay when approving submissions.')
+      
+      // Redirect after a short delay
+      setTimeout(() => router.push('/'), 1500)
+    } catch (error: any) {
       console.error('Error posting task:', error)
-      toast.error('Failed to post task. Please try again.')
+      toast.dismiss(loadingToast)
+      toast.error(error.message || 'Failed to post task. Please try again.')
     } finally {
       setLoading(false)
     }

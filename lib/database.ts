@@ -242,18 +242,21 @@ export async function getTaskById(taskId: string) {
   return data
 }
 
-export async function createTask(taskData: {
-  title: string
-  description: string
-  category: string
-  paymentPerWorker: number
-  workersNeeded: number
-  timeEstimate: string
-  submissionType: 'text' | 'file' | 'url'
-  requirements: string[]
-  exampleSubmission?: string
-  requesterWallet: string
-}) {
+export async function createTask(
+  taskData: {
+    title: string
+    description: string
+    category: string
+    paymentPerWorker: number
+    workersNeeded: number
+    timeEstimate: string
+    submissionType: 'text' | 'file' | 'url'
+    requirements: string[]
+    exampleSubmission?: string
+    requesterWallet: string
+  },
+  onChainCreation?: (taskId: string) => Promise<string>
+) {
   try {
     // Get or create the requester user first
     const requester = await getOrCreateUser(taskData.requesterWallet)
@@ -290,6 +293,29 @@ export async function createTask(taskData: {
     if (error) {
       console.error('Error creating task:', error)
       throw error
+    }
+
+    console.log('Task created in database:', data)
+
+    // Execute on-chain task creation if callback provided
+    let transactionHash: string | null = null
+    if (onChainCreation && data.id) {
+      try {
+        console.log('Creating task on-chain with ID:', data.id)
+        transactionHash = await onChainCreation(data.id)
+        console.log('On-chain task creation successful:', transactionHash)
+        
+        // Update task with transaction hash
+        await supabase
+          .from('tasks')
+          .update({ transaction_hash: transactionHash })
+          .eq('id', data.id)
+      } catch (error) {
+        console.error('On-chain task creation failed:', error)
+        // Rollback database task creation
+        await supabase.from('tasks').delete().eq('id', data.id)
+        throw new Error('Failed to lock funds in escrow. Task creation cancelled.')
+      }
     }
 
     console.log('Task created successfully:', data)
@@ -414,26 +440,77 @@ export async function submitWork(submissionData: {
   }
 }
 
-export async function approveSubmission(submissionId: string, taskId: string) {
-  const { data, error } = await supabase
-    .from('submissions')
-    .update({
-      status: 'approved',
-      reviewed_at: new Date().toISOString()
-    })
-    .eq('id', submissionId)
-    .select()
-    .single()
+export async function approveSubmission(
+  submissionId: string, 
+  taskId: string,
+  onChainApproval?: (workerWallet: string) => Promise<string>
+) {
+  try {
+    // Get submission details including worker wallet
+    const { data: submission } = await supabase
+      .from('submissions')
+      .select(`
+        *,
+        worker:users!submissions_worker_id_fkey(wallet_address)
+      `)
+      .eq('id', submissionId)
+      .single()
 
-  if (error) {
-    console.error('Error approving submission:', error)
+    if (!submission) {
+      throw new Error('Submission not found')
+    }
+
+    // Execute on-chain payment if callback provided
+    let transactionHash: string | null = null
+    if (onChainApproval && submission.worker) {
+      try {
+        console.log('Executing on-chain payment to:', submission.worker.wallet_address)
+        transactionHash = await onChainApproval(submission.worker.wallet_address)
+        console.log('On-chain payment successful:', transactionHash)
+      } catch (error) {
+        console.error('On-chain payment failed:', error)
+        throw new Error('Payment transaction failed. Please try again.')
+      }
+    }
+
+    // Update submission status
+    const { data, error } = await supabase
+      .from('submissions')
+      .update({
+        status: 'approved',
+        reviewed_at: new Date().toISOString(),
+        transaction_hash: transactionHash
+      })
+      .eq('id', submissionId)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error approving submission:', error)
+      throw error
+    }
+
+    // Check if task is now complete
+    const { data: task } = await supabase
+      .from('tasks')
+      .select('workers_needed, workers_completed')
+      .eq('id', taskId)
+      .single()
+
+    if (task && task.workers_completed >= task.workers_needed) {
+      // Mark task as completed
+      await supabase
+        .from('tasks')
+        .update({ status: 'completed' })
+        .eq('id', taskId)
+    }
+
+    console.log('Submission approved successfully')
+    return data
+  } catch (error) {
+    console.error('Exception in approveSubmission:', error)
     throw error
   }
-
-  // TODO: Trigger smart contract payment here
-  // For now, just update the submission status
-
-  return data
 }
 
 export async function rejectSubmission(submissionId: string, taskId: string) {
