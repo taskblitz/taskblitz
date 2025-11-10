@@ -1,0 +1,317 @@
+{
+  "version": "0.1.0",
+  "name": "taskblitz",
+  "instructions": [
+    {
+      "name": "createTask",
+      "accounts": [
+        {
+          "name": "task",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "requester",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "taskId",
+          "type": "string"
+        },
+        {
+          "name": "paymentPerWorker",
+          "type": "u64"
+        },
+        {
+          "name": "workersNeeded",
+          "type": "u8"
+        },
+        {
+          "name": "platformFeeBps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "submitWork",
+      "accounts": [
+        {
+          "name": "submission",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "task",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "worker",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "submissionId",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "approveSubmission",
+      "accounts": [
+        {
+          "name": "task",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "submission",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "requester",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "worker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "platformWallet",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "rejectSubmission",
+      "accounts": [
+        {
+          "name": "task",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "submission",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "requester",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancelTask",
+      "accounts": [
+        {
+          "name": "task",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "escrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "requester",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Task",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "taskId",
+            "type": "string"
+          },
+          {
+            "name": "requester",
+            "type": "publicKey"
+          },
+          {
+            "name": "paymentPerWorker",
+            "type": "u64"
+          },
+          {
+            "name": "workersNeeded",
+            "type": "u8"
+          },
+          {
+            "name": "workersCompleted",
+            "type": "u8"
+          },
+          {
+            "name": "platformFeeBps",
+            "type": "u16"
+          },
+          {
+            "name": "escrowAmount",
+            "type": "u64"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "TaskStatus"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Submission",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "submissionId",
+            "type": "string"
+          },
+          {
+            "name": "task",
+            "type": "publicKey"
+          },
+          {
+            "name": "worker",
+            "type": "publicKey"
+          },
+          {
+            "name": "submittedAt",
+            "type": "i64"
+          },
+          {
+            "name": "reviewedAt",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "SubmissionStatus"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "TaskStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Completed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SubmissionStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6001,
+      "name": "TaskNotActive",
+      "msg": "Task is not active"
+    },
+    {
+      "code": 6002,
+      "name": "TaskFull",
+      "msg": "Task is full"
+    },
+    {
+      "code": 6003,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidStatus",
+      "msg": "Invalid status"
+    }
+  ],
+  "address": "7UHcXx65GV3HP1VF24N8daSkqTuWMCXUeyCTNaMtQ4AE",
+  "metadata": {
+    "name": "taskblitz",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  }
+}

@@ -4,7 +4,7 @@ import { Clock, Users, Eye, CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import { approveSubmission, rejectSubmission } from '@/lib/database'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { approveSubmissionOnChain } from '@/lib/solana'
+import { approveSubmissionWithEscrow } from '@/lib/anchor-client'
 import { PublicKey } from '@solana/web3.js'
 import toast from 'react-hot-toast'
 
@@ -73,28 +73,23 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
       return
     }
 
-    const loadingToast = toast.loading('Processing payment on blockchain...')
+    const loadingToast = toast.loading('Releasing payment from escrow...')
     
     try {
-      // Calculate payment in lamports
-      const { usdToLamports } = await import('@/lib/solana')
-      const paymentLamports = usdToLamports(task.paymentPerWorker)
-      
-      // Approve with on-chain payment
+      // Approve with escrow release using Anchor
       await approveSubmission(submissionId, task.id, async (workerWalletAddress) => {
-        // Execute blockchain transaction
-        const txHash = await approveSubmissionOnChain(
+        // Execute blockchain transaction - release from escrow
+        const txHash = await approveSubmissionWithEscrow(
           wallet,
           task.id,
           submissionId,
-          new PublicKey(workerWalletAddress),
-          paymentLamports
+          new PublicKey(workerWalletAddress)
         )
         return txHash
       })
       
       toast.dismiss(loadingToast)
-      toast.success(`✅ Approved! Payment of $${task.paymentPerWorker} sent on-chain.`)
+      toast.success(`✅ Approved! Payment of $${task.paymentPerWorker} released from escrow.`)
       
       // Refresh the page to show updated status
       setTimeout(() => window.location.reload(), 1500)

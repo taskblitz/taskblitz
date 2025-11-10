@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { DollarSign, Clock, FileText, Upload, Plus, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { createTask } from '@/lib/database'
-import { createTaskOnChain } from '@/lib/solana'
+import { createTaskWithEscrow } from '@/lib/anchor-client'
 import { useUser } from '@/contexts/UserContext'
 
 interface TaskFormData {
@@ -136,7 +136,7 @@ export function PostTaskForm() {
       const paymentPerWorker = parseFloat(formData.paymentPerWorker)
       const workersNeeded = parseInt(formData.workersNeeded)
       
-      // Create task in database (no escrow payment for MVP)
+      // Create task in database WITH escrow
       const newTask = await createTask({
         title: formData.title.trim(),
         description: formData.description.trim(),
@@ -148,16 +148,22 @@ export function PostTaskForm() {
         requesterWallet: publicKey.toString(),
         requirements: cleanRequirements,
         exampleSubmission: formData.exampleSubmission.trim() || undefined
+      }, async (taskId: string) => {
+        // Lock funds in escrow using Anchor
+        toast.loading('Locking funds in escrow...', { id: loadingToast })
+        const txHash = await createTaskWithEscrow(
+          wallet,
+          taskId,
+          paymentPerWorker,
+          workersNeeded
+        )
+        return txHash
       })
-      
-      // Note: For MVP, we skip escrow at creation
-      // Payment happens when you approve submissions
-      // This avoids double-payment issue
       
       console.log('Task posted successfully:', newTask)
       
       toast.dismiss(loadingToast)
-      toast.success('✅ Task posted! You\'ll pay when approving submissions.')
+      toast.success('✅ Task posted! Funds locked in escrow.')
       
       // Redirect after a short delay
       setTimeout(() => router.push('/'), 1500)
