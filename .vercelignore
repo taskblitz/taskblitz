@@ -1,0 +1,28 @@
+# Deployment scripts (Windows-specific)
+deploy-*.bat
+setup-*.bat
+
+# Documentation
+*.md
+!README.md
+
+# Development files
+.vscode/
+.kiro/
+
+# Rust/Anchor (not needed for frontend deployment)
+programs/
+target/
+Anchor.toml
+Cargo.toml
+Cargo.lock
+
+# Test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Local environment
+.env.local
+.env*.local
