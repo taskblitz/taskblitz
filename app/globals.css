@@ -40,6 +40,15 @@
   .gradient-text {
     @apply bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 

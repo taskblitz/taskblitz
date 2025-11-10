@@ -81,12 +81,22 @@ export function lamportsToUsd(lamports: number): number {
   return sol * SOL_PRICE_USD
 }
 
+// Convert USD to payment amount based on currency
+export function usdToPaymentAmount(usd: number, currency: 'SOL' | 'USDC'): number {
+  if (currency === 'USDC') {
+    const { usdToUSDC } = require('./usdc')
+    return usdToUSDC(usd)
+  }
+  return usdToLamports(usd)
+}
+
 // Create task with escrow
 export async function createTaskWithEscrow(
   wallet: WalletContextState,
   taskId: string,
   paymentPerWorker: number, // in USD
-  workersNeeded: number
+  workersNeeded: number,
+  currency: 'SOL' | 'USDC' = 'SOL'
 ): Promise<string> {
   try {
     const program = getProgram(wallet)
@@ -103,6 +113,7 @@ export async function createTaskWithEscrow(
       escrowPDA: escrowPDA.toString(),
       paymentLamports,
       workersNeeded,
+      currency,
       programId: PROGRAM_ID.toString()
     })
 
@@ -126,35 +137,47 @@ export async function createTaskWithEscrow(
     return tx
   } catch (error: any) {
     console.error('Anchor program call failed:', error)
-    console.log('Falling back to simple escrow transfer...')
+    console.log(`Falling back to simple ${currency} escrow transfer...`)
     
-    // Fallback: Simple transfer to platform wallet as escrow
-    // This works even if the program isn't deployed
-    const paymentLamports = usdToLamports(paymentPerWorker)
-    const totalPayment = paymentLamports * workersNeeded
-    const platformFee = Math.floor((totalPayment * 1000) / 10000) // 10%
-    const escrowAmount = totalPayment + platformFee
-    
-    const { Transaction, SystemProgram } = await import('@solana/web3.js')
-    
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: wallet.publicKey!,
-        toPubkey: PLATFORM_WALLET,
-        lamports: escrowAmount,
-      })
-    )
-    
-    transaction.feePayer = wallet.publicKey!
-    const { blockhash } = await connection.getLatestBlockhash()
-    transaction.recentBlockhash = blockhash
-    
-    const signed = await wallet.signTransaction!(transaction)
-    const signature = await connection.sendRawTransaction(signed.serialize())
-    await connection.confirmTransaction(signature)
-    
-    console.log('✅ Fallback escrow transfer complete! TX:', signature)
-    return signature
+    // Fallback: Transfer to platform wallet as escrow
+    if (currency === 'USDC') {
+      const { transferUSDC, usdToUSDC } = await import('./usdc')
+      const paymentAmount = usdToUSDC(paymentPerWorker)
+      const totalPayment = paymentAmount * workersNeeded
+      const platformFee = Math.floor((totalPayment * 1000) / 10000) // 10%
+      const escrowAmount = totalPayment + platformFee
+      
+      const signature = await transferUSDC(wallet, connection, PLATFORM_WALLET, escrowAmount)
+      console.log('✅ Fallback USDC escrow transfer complete! TX:', signature)
+      return signature
+    } else {
+      // SOL fallback
+      const paymentLamports = usdToLamports(paymentPerWorker)
+      const totalPayment = paymentLamports * workersNeeded
+      const platformFee = Math.floor((totalPayment * 1000) / 10000) // 10%
+      const escrowAmount = totalPayment + platformFee
+      
+      const { Transaction, SystemProgram } = await import('@solana/web3.js')
+      
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: wallet.publicKey!,
+          toPubkey: PLATFORM_WALLET,
+          lamports: escrowAmount,
+        })
+      )
+      
+      transaction.feePayer = wallet.publicKey!
+      const { blockhash } = await connection.getLatestBlockhash()
+      transaction.recentBlockhash = blockhash
+      
+      const signed = await wallet.signTransaction!(transaction)
+      const signature = await connection.sendRawTransaction(signed.serialize())
+      await connection.confirmTransaction(signature)
+      
+      console.log('✅ Fallback SOL escrow transfer complete! TX:', signature)
+      return signature
+    }
   }
 }
 
@@ -164,7 +187,8 @@ export async function approveSubmissionWithEscrow(
   taskId: string,
   submissionId: string,
   workerPubkey: PublicKey,
-  paymentAmount?: number // optional, for fallback
+  paymentAmount?: number, // optional, for fallback
+  currency: 'SOL' | 'USDC' = 'SOL'
 ): Promise<string> {
   try {
     const program = getProgram(wallet)
@@ -177,7 +201,8 @@ export async function approveSubmissionWithEscrow(
       taskPDA: taskPDA.toString(),
       submissionPDA: submissionPDA.toString(),
       escrowPDA: escrowPDA.toString(),
-      worker: workerPubkey.toString()
+      worker: workerPubkey.toString(),
+      currency
     })
 
     // Call the approve_submission instruction
@@ -197,33 +222,41 @@ export async function approveSubmissionWithEscrow(
     return tx
   } catch (error: any) {
     console.error('Anchor program call failed:', error)
-    console.log('Falling back to direct payment...')
+    console.log(`Falling back to direct ${currency} payment...`)
     
     // Fallback: Direct payment from requester to worker
     if (!paymentAmount) {
       throw new Error('Payment amount required for fallback')
     }
     
-    const { Transaction, SystemProgram } = await import('@solana/web3.js')
-    
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: wallet.publicKey!,
-        toPubkey: workerPubkey,
-        lamports: paymentAmount,
-      })
-    )
-    
-    transaction.feePayer = wallet.publicKey!
-    const { blockhash } = await connection.getLatestBlockhash()
-    transaction.recentBlockhash = blockhash
-    
-    const signed = await wallet.signTransaction!(transaction)
-    const signature = await connection.sendRawTransaction(signed.serialize())
-    await connection.confirmTransaction(signature)
-    
-    console.log('✅ Fallback payment complete! TX:', signature)
-    return signature
+    if (currency === 'USDC') {
+      const { transferUSDC } = await import('./usdc')
+      const signature = await transferUSDC(wallet, connection, workerPubkey, paymentAmount)
+      console.log('✅ Fallback USDC payment complete! TX:', signature)
+      return signature
+    } else {
+      // SOL fallback
+      const { Transaction, SystemProgram } = await import('@solana/web3.js')
+      
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: wallet.publicKey!,
+          toPubkey: workerPubkey,
+          lamports: paymentAmount,
+        })
+      )
+      
+      transaction.feePayer = wallet.publicKey!
+      const { blockhash } = await connection.getLatestBlockhash()
+      transaction.recentBlockhash = blockhash
+      
+      const signed = await wallet.signTransaction!(transaction)
+      const signature = await connection.sendRawTransaction(signed.serialize())
+      await connection.confirmTransaction(signature)
+      
+      console.log('✅ Fallback SOL payment complete! TX:', signature)
+      return signature
+    }
   }
 }
 

@@ -20,6 +20,7 @@ interface TaskFormData {
   submissionType: 'text' | 'file' | 'url'
   requirements: string[]
   exampleSubmission: string
+  currency: 'SOL' | 'USDC'
 }
 
 export function PostTaskForm() {
@@ -39,7 +40,8 @@ export function PostTaskForm() {
     timeEstimate: '',
     submissionType: 'url',
     requirements: [''],
-    exampleSubmission: ''
+    exampleSubmission: '',
+    currency: 'SOL'
   })
 
   useEffect(() => {
@@ -147,15 +149,17 @@ export function PostTaskForm() {
         submissionType: formData.submissionType,
         requesterWallet: publicKey.toString(),
         requirements: cleanRequirements,
-        exampleSubmission: formData.exampleSubmission.trim() || undefined
+        exampleSubmission: formData.exampleSubmission.trim() || undefined,
+        currency: formData.currency
       }, async (taskId: string) => {
         // Lock funds in escrow using Anchor
-        toast.loading('Locking funds in escrow...', { id: loadingToast })
+        toast.loading(`Locking ${formData.currency} in escrow...`, { id: loadingToast })
         const txHash = await createTaskWithEscrow(
           wallet,
           taskId,
           paymentPerWorker,
-          workersNeeded
+          workersNeeded,
+          formData.currency
         )
         return txHash
       })
@@ -276,6 +280,19 @@ export function PostTaskForm() {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium mb-2">Currency *</label>
+            <select
+              value={formData.currency}
+              onChange={(e) => handleInputChange('currency', e.target.value)}
+              className="w-full glass-card px-4 py-3 bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white"
+            >
+              <option value="SOL" className="bg-gray-800">SOL (Solana)</option>
+              <option value="USDC" className="bg-gray-800">USDC (Stablecoin)</option>
+            </select>
+            <p className="text-xs text-text-muted mt-1">Choose payment currency</p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-2">Payment Per Worker (USD) *</label>
             <div className="relative">

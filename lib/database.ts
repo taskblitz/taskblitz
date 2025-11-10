@@ -254,6 +254,7 @@ export async function createTask(
     requirements: string[]
     exampleSubmission?: string
     requesterWallet: string
+    currency?: 'SOL' | 'USDC'
   },
   onChainCreation?: (taskId: string) => Promise<string>
 ) {
@@ -281,7 +282,8 @@ export async function createTask(
       escrow_amount: escrowAmount,
       submission_type: taskData.submissionType,
       requirements: taskData.requirements,
-      example_submission: taskData.exampleSubmission || null
+      example_submission: taskData.exampleSubmission || null,
+      currency: taskData.currency || 'SOL'
     }
 
     const { data, error } = await supabase

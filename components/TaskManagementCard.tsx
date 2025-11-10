@@ -33,6 +33,7 @@ interface Task {
   deadline: Date
   category: string
   submissions: Submission[]
+  currency?: 'SOL' | 'USDC'
 }
 
 interface TaskManagementCardProps {
@@ -73,12 +74,13 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
       return
     }
 
-    const loadingToast = toast.loading('Releasing payment from escrow...')
+    const currency = task.currency || 'SOL'
+    const loadingToast = toast.loading(`Releasing ${currency} payment from escrow...`)
     
     try {
-      // Calculate payment in lamports for fallback
-      const { usdToLamports } = await import('@/lib/anchor-client')
-      const paymentLamports = usdToLamports(task.paymentPerWorker)
+      // Calculate payment amount based on currency
+      const { usdToPaymentAmount } = await import('@/lib/anchor-client')
+      const paymentAmount = usdToPaymentAmount(task.paymentPerWorker, currency)
       
       // Approve with escrow release using Anchor
       await approveSubmission(submissionId, task.id, async (workerWalletAddress) => {
@@ -88,13 +90,14 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
           task.id,
           submissionId,
           new PublicKey(workerWalletAddress),
-          paymentLamports // for fallback if Anchor fails
+          paymentAmount, // for fallback if Anchor fails
+          currency
         )
         return txHash
       })
       
       toast.dismiss(loadingToast)
-      toast.success(`✅ Approved! Payment of $${task.paymentPerWorker} released from escrow.`)
+      toast.success(`✅ Approved! $${task.paymentPerWorker} (${currency}) released from escrow.`)
       
       // Refresh the page to show updated status
       setTimeout(() => window.location.reload(), 1500)
@@ -134,7 +137,7 @@ export function TaskManagementCard({ task }: TaskManagementCardProps) {
             <h3 className="text-lg font-semibold mb-2 hover:text-purple-300 transition-colors cursor-pointer">{task.title}</h3>
           </Link>
           <div className="flex items-center space-x-4 text-sm text-text-secondary mb-3">
-            <span>${task.paymentPerWorker} each</span>
+            <span>${task.paymentPerWorker} {task.currency || 'SOL'}</span>
             <div className="flex items-center">
               <Users className="w-3 h-3 mr-1" />
               <span>{task.workersCompleted}/{task.workersNeeded} completed</span>

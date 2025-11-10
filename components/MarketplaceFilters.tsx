@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Filter, X } from 'lucide-react'
+import { MixerHorizontalIcon, Cross2Icon } from '@radix-ui/react-icons'
 
 interface MarketplaceFiltersProps {
   onFiltersChange: (filters: {
@@ -8,9 +8,17 @@ interface MarketplaceFiltersProps {
     difficulty: string[]
     rewardRange: { min: string; max: string }
   }) => void
+  isMobile?: boolean
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
 }
 
-export function MarketplaceFilters({ onFiltersChange }: MarketplaceFiltersProps) {
+export function MarketplaceFilters({ 
+  onFiltersChange, 
+  isMobile = false,
+  searchQuery = '',
+  onSearchChange
+}: MarketplaceFiltersProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedDifficulty, setSelectedDifficulty] = useState<string[]>([])
   const [rewardRange, setRewardRange] = useState({ min: '', max: '' })
@@ -73,9 +81,22 @@ export function MarketplaceFilters({ onFiltersChange }: MarketplaceFiltersProps)
 
   return (
     <div className="glass-card p-6 sticky top-24">
+      {/* Search Bar - Desktop Only */}
+      {!isMobile && onSearchChange && (
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="🔍 Search tasks..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="w-full glass-card px-3 py-2.5 text-sm bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white placeholder-text-muted"
+          />
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <Filter className="w-5 h-5 mr-2 text-purple-400" />
+          <MixerHorizontalIcon className="w-5 h-5 mr-2 text-purple-400" />
           <h3 className="font-semibold">Filters</h3>
         </div>
         {hasActiveFilters && (
@@ -83,7 +104,7 @@ export function MarketplaceFilters({ onFiltersChange }: MarketplaceFiltersProps)
             onClick={clearFilters}
             className="text-xs text-purple-400 hover:text-purple-300 flex items-center"
           >
-            <X className="w-3 h-3 mr-1" />
+            <Cross2Icon className="w-3 h-3 mr-1" />
             Clear
           </button>
         )}
