@@ -1,21 +1,23 @@
--- Demo Tasks for YOUR wallet: 3NAsTFu71YSXzGr78XV6jLC4YaqdJB93Ep43LtVKkFxR
--- Run this in Supabase SQL Editor
+-- Realistic Demo Tasks - No TaskBlitz promotion!
+-- For wallet: 3NAsTFu71YSXzGr78XV6jLC4YaqdJB93Ep43LtVKkFxR
+-- 5 Funny + 7 Crypto + 8 General Tasks
 
--- Get your user ID
 DO $$
 DECLARE
   my_user_id UUID;
 BEGIN
-  -- Get your user ID from your wallet address
   SELECT id INTO my_user_id FROM users 
   WHERE wallet_address = '3NAsTFu71YSXzGr78XV6jLC4YaqdJB93Ep43LtVKkFxR';
 
-  -- If user doesn't exist, create it
   IF my_user_id IS NULL THEN
     INSERT INTO users (wallet_address, username, role)
     VALUES ('3NAsTFu71YSXzGr78XV6jLC4YaqdJB93Ep43LtVKkFxR', 'CryptoTasker', 'both')
     RETURNING id INTO my_user_id;
   END IF;
+
+  -- ============================================
+  -- FUNNY TASKS (5)
+  -- ============================================
 
   -- Task 1: Social Media
   INSERT INTO tasks (requester_id, title, description, category, payment_per_task, workers_needed, deadline, escrow_amount, submission_type, requirements, status)
