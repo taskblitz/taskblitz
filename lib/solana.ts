@@ -2,7 +2,8 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import { WalletContextState } from '@solana/wallet-adapter-react'
 
 // Program ID from deployment
-const PROGRAM_ID_STRING = process.env.NEXT_PUBLIC_PROGRAM_ID || 'TaskB1itzProgram11111111111111111111111111'
+// Use a valid placeholder public key for build time
+const PROGRAM_ID_STRING = process.env.NEXT_PUBLIC_PROGRAM_ID || '11111111111111111111111111111111'
 export const PROGRAM_ID = new PublicKey(PROGRAM_ID_STRING)
 
 // Platform wallet (for now, use the same as program ID - update this later with your actual wallet)
