@@ -4,6 +4,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Menu, X, ChevronDown } from 'lucide-react'
+import { NotificationBell } from './NotificationBell'
 
 
 export function Header() {
@@ -92,12 +93,15 @@ export function Header() {
             {/* Right Side - Wallet + Mobile Menu */}
             <div className="flex items-center space-x-2 md:space-x-4">
               {connected && mounted && (
-                <Link 
-                  href="/post-task"
-                  className="hidden sm:block post-task-button text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg hover:scale-105 transition-all duration-200"
-                >
-                  Post Task
-                </Link>
+                <>
+                  <NotificationBell />
+                  <Link 
+                    href="/post-task"
+                    className="hidden sm:block post-task-button text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg hover:scale-105 transition-all duration-200"
+                  >
+                    Post Task
+                  </Link>
+                </>
               )}
               {mounted ? (
                 <div className="wallet-button-container scale-90 md:scale-100">

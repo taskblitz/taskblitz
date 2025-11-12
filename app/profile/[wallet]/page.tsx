@@ -141,67 +141,69 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Profile Header */}
-        <div className="glass-card rounded-2xl p-8 mb-8">
-          <div className="flex items-start gap-6">
+        <div className="glass-card rounded-2xl p-4 md:p-8 mb-8">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-3xl font-bold">
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-2xl md:text-3xl font-bold flex-shrink-0">
               {profile.username?.[0]?.toUpperCase() || profile.wallet_address[0]}
             </div>
 
             {/* Info */}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">
+            <div className="flex-1 text-center md:text-left w-full">
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">
                 {profile.username || `${profile.wallet_address.slice(0, 8)}...${profile.wallet_address.slice(-6)}`}
               </h1>
               
               {profile.bio && (
-                <p className="text-gray-400 mb-4">{profile.bio}</p>
+                <p className="text-gray-400 mb-4 text-sm md:text-base">{profile.bio}</p>
               )}
 
-              <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-gray-500 mb-4">
                 <Calendar className="w-4 h-4" />
                 <span>Joined {new Date(profile.created_at).toLocaleDateString()}</span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <span className="font-mono">{profile.wallet_address}</span>
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <span className="font-mono text-xs text-gray-600 break-all px-2 py-1 bg-white/5 rounded">
+                  {profile.wallet_address}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="glass-card rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <Briefcase className="w-5 h-5 text-purple-400" />
-              <span className="text-gray-400">Tasks Posted</span>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8">
+          <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
+              <span className="text-xs md:text-sm text-gray-400">Tasks Posted</span>
             </div>
-            <div className="text-3xl font-bold">{profile.tasks_posted}</div>
+            <div className="text-2xl md:text-3xl font-bold">{profile.tasks_posted}</div>
           </div>
 
-          <div className="glass-card rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <CheckCircle className="w-5 h-5 text-green-400" />
-              <span className="text-gray-400">Tasks Completed</span>
+          <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+              <span className="text-xs md:text-sm text-gray-400">Tasks Completed</span>
             </div>
-            <div className="text-3xl font-bold">{profile.tasks_completed}</div>
+            <div className="text-2xl md:text-3xl font-bold">{profile.tasks_completed}</div>
           </div>
 
-          <div className="glass-card rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="w-5 h-5 text-cyan-400" />
-              <span className="text-gray-400">Total Earned</span>
+          <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+              <span className="text-xs md:text-sm text-gray-400">Total Earned</span>
             </div>
-            <div className="text-3xl font-bold">${profile.total_earned.toFixed(2)}</div>
+            <div className="text-2xl md:text-3xl font-bold">${profile.total_earned.toFixed(2)}</div>
           </div>
 
-          <div className="glass-card rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="w-5 h-5 text-orange-400" />
-              <span className="text-gray-400">Total Spent</span>
+          <div className="glass-card rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-2">
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-orange-400" />
+              <span className="text-xs md:text-sm text-gray-400">Total Spent</span>
             </div>
-            <div className="text-3xl font-bold">${profile.total_spent.toFixed(2)}</div>
+            <div className="text-2xl md:text-3xl font-bold">${profile.total_spent.toFixed(2)}</div>
           </div>
         </div>
 

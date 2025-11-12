@@ -137,20 +137,20 @@ export default function TransactionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
               filter === 'all'
                 ? 'bg-purple-600 text-white'
                 : 'bg-white/5 text-gray-400 hover:bg-white/10'
             }`}
           >
-            All Transactions
+            All
           </button>
           <button
             onClick={() => setFilter('incoming')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
               filter === 'incoming'
                 ? 'bg-green-600 text-white'
                 : 'bg-white/5 text-gray-400 hover:bg-white/10'
@@ -160,7 +160,7 @@ export default function TransactionsPage() {
           </button>
           <button
             onClick={() => setFilter('outgoing')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base ${
               filter === 'outgoing'
                 ? 'bg-red-600 text-white'
                 : 'bg-white/5 text-gray-400 hover:bg-white/10'
@@ -197,17 +197,17 @@ export default function TransactionsPage() {
             {transactions.map((tx) => (
               <div
                 key={tx.id}
-                className="glass-card rounded-xl p-6 hover:bg-white/10 transition-all"
+                className="glass-card rounded-xl p-4 md:p-6 hover:bg-white/10 transition-all"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="p-3 bg-white/5 rounded-lg">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                  <div className="flex items-start gap-3 md:gap-4 flex-1">
+                    <div className="p-2 md:p-3 bg-white/5 rounded-lg flex-shrink-0">
                       {getTransactionIcon(tx.transaction_type)}
                     </div>
                     
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-semibold text-lg capitalize">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-base md:text-lg capitalize">
                           {tx.transaction_type.replace('_', ' ')}
                         </h3>
                         <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(tx.status)}`}>
@@ -216,14 +216,14 @@ export default function TransactionsPage() {
                       </div>
                       
                       {tx.task && (
-                        <p className="text-gray-400 text-sm mb-2">
+                        <p className="text-gray-400 text-sm mb-2 truncate">
                           Task: {tx.task.title}
                         </p>
                       )}
                       
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500">
                         <span>{new Date(tx.created_at).toLocaleDateString()}</span>
-                        <span>{new Date(tx.created_at).toLocaleTimeString()}</span>
+                        <span className="hidden md:inline">{new Date(tx.created_at).toLocaleTimeString()}</span>
                         {tx.solana_tx_hash && (
                           <a
                             href={`https://solscan.io/tx/${tx.solana_tx_hash}?cluster=devnet`}
@@ -231,7 +231,8 @@ export default function TransactionsPage() {
                             rel="noopener noreferrer"
                             className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
                           >
-                            View on Solscan
+                            <span className="hidden md:inline">View on Solscan</span>
+                            <span className="md:hidden">Solscan</span>
                             <ArrowUpRight className="w-3 h-3" />
                           </a>
                         )}
@@ -239,15 +240,15 @@ export default function TransactionsPage() {
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">
+                  <div className="text-left md:text-right flex md:flex-col items-center md:items-end gap-2">
+                    <div className="text-xl md:text-2xl font-bold">
                       {tx.transaction_type === 'payment' || tx.transaction_type === 'refund' ? (
                         <span className="text-green-400">+${tx.amount.toFixed(2)}</span>
                       ) : (
                         <span className="text-red-400">-${tx.amount.toFixed(2)}</span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-500">{tx.currency}</div>
+                    <div className="text-xs md:text-sm text-gray-500">{tx.currency}</div>
                   </div>
                 </div>
               </div>

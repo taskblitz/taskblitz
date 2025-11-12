@@ -70,7 +70,7 @@ async function sendEmail(data: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'TaskBlitz <onboarding@resend.dev>', // Change to notifications@taskblitz.click after domain verification
+        from: 'TaskBlitz <notifications@taskblitz.click>',
         to: data.to,
         subject: data.subject,
         html: `

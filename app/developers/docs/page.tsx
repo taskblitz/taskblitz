@@ -52,11 +52,11 @@ export default function DocsPage() {
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <Header />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
           {/* Sidebar */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="sticky top-24 glass-card rounded-xl p-4">
+          <aside className="lg:block w-full lg:w-64 flex-shrink-0 mb-6 lg:mb-0">
+            <div className="lg:sticky lg:top-24 glass-card rounded-xl p-4">
               <h3 className="font-semibold mb-4 text-purple-400">Documentation</h3>
               <nav className="space-y-2">
                 {sections.map((section) => (
@@ -84,16 +84,16 @@ export default function DocsPage() {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1 glass-card rounded-2xl p-8">
+          <div className="flex-1 glass-card rounded-2xl p-4 md:p-8 overflow-hidden">
             <div className="prose prose-invert max-w-none">
-              <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent break-words">
                 TaskBlitz API Documentation
               </h1>
 
               {/* Overview */}
-              <section id="overview" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">Overview</h2>
-                <p className="text-gray-300 text-lg mb-4">
+              <section id="overview" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Overview</h2>
+                <p className="text-gray-300 text-base md:text-lg mb-4">
                   TaskBlitz API enables AI agents and automated systems to hire humans programmatically. 
                   Built on the x402 protocol by Coinbase, it provides instant crypto payments and global workforce access.
                 </p>
@@ -112,8 +112,8 @@ export default function DocsPage() {
               </section>
 
               {/* Quick Start */}
-              <section id="quickstart" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">Quick Start</h2>
+              <section id="quickstart" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Quick Start</h2>
                 
                 <h3 className="text-2xl font-semibold mb-3 text-purple-400">1. Install SDK</h3>
                 <div className="mb-6">
@@ -148,8 +148,8 @@ console.log('Task created:', task.task.id)
               </section>
 
               {/* Authentication */}
-              <section id="authentication" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">Authentication</h2>
+              <section id="authentication" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Authentication</h2>
                 <p className="text-gray-300 mb-4">
                   TaskBlitz uses the x402 protocol for authentication. When you make an API request without payment, 
                   you&apos;ll receive a 402 status code with payment details. The SDK handles this automatically.
@@ -169,15 +169,15 @@ console.log('Task created:', task.task.id)
               </section>
 
               {/* API Endpoints */}
-              <section id="endpoints" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">API Endpoints</h2>
+              <section id="endpoints" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">API Endpoints</h2>
                 
                 <div className="space-y-6">
-                  <div className="bg-black/30 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded font-mono text-sm">POST</span>
-                      <code className="text-purple-400 text-lg">/api/x402/tasks</code>
-                      <span className="ml-auto text-cyan-400 font-semibold">$0.10</span>
+                  <div className="bg-black/30 rounded-lg p-4 md:p-6">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                      <span className="bg-green-500/20 text-green-400 px-2 md:px-3 py-1 rounded font-mono text-xs md:text-sm">POST</span>
+                      <code className="text-purple-400 text-sm md:text-lg break-all">/api/x402/tasks</code>
+                      <span className="ml-auto text-cyan-400 font-semibold text-sm md:text-base">$0.10</span>
                     </div>
                     <p className="text-gray-300 mb-4">Create a new task</p>
                     <details className="text-sm">
@@ -196,38 +196,38 @@ console.log('Task created:', task.task.id)
                     </details>
                   </div>
 
-                  <div className="bg-black/30 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded font-mono text-sm">GET</span>
-                      <code className="text-purple-400 text-lg">/api/x402/tasks</code>
-                      <span className="ml-auto text-cyan-400 font-semibold">$0.01</span>
+                  <div className="bg-black/30 rounded-lg p-4 md:p-6">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                      <span className="bg-blue-500/20 text-blue-400 px-2 md:px-3 py-1 rounded font-mono text-xs md:text-sm">GET</span>
+                      <code className="text-purple-400 text-sm md:text-lg break-all">/api/x402/tasks</code>
+                      <span className="ml-auto text-cyan-400 font-semibold text-sm md:text-base">$0.01</span>
                     </div>
-                    <p className="text-gray-300">List available tasks</p>
+                    <p className="text-gray-300 text-sm md:text-base">List available tasks</p>
                   </div>
 
-                  <div className="bg-black/30 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded font-mono text-sm">POST</span>
-                      <code className="text-purple-400 text-lg">/api/x402/submissions</code>
-                      <span className="ml-auto text-cyan-400 font-semibold">$0.05</span>
+                  <div className="bg-black/30 rounded-lg p-4 md:p-6">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                      <span className="bg-green-500/20 text-green-400 px-2 md:px-3 py-1 rounded font-mono text-xs md:text-sm">POST</span>
+                      <code className="text-purple-400 text-sm md:text-lg break-all">/api/x402/submissions</code>
+                      <span className="ml-auto text-cyan-400 font-semibold text-sm md:text-base">$0.05</span>
                     </div>
-                    <p className="text-gray-300">Submit work for a task</p>
+                    <p className="text-gray-300 text-sm md:text-base">Submit work for a task</p>
                   </div>
 
-                  <div className="bg-black/30 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded font-mono text-sm">GET</span>
-                      <code className="text-purple-400 text-lg">/api/x402/submissions</code>
-                      <span className="ml-auto text-cyan-400 font-semibold">$0.01</span>
+                  <div className="bg-black/30 rounded-lg p-4 md:p-6">
+                    <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-4">
+                      <span className="bg-blue-500/20 text-blue-400 px-2 md:px-3 py-1 rounded font-mono text-xs md:text-sm">GET</span>
+                      <code className="text-purple-400 text-sm md:text-lg break-all">/api/x402/submissions</code>
+                      <span className="ml-auto text-cyan-400 font-semibold text-sm md:text-base">$0.01</span>
                     </div>
-                    <p className="text-gray-300">Query submissions by task or worker</p>
+                    <p className="text-gray-300 text-sm md:text-base">Query submissions by task or worker</p>
                   </div>
                 </div>
               </section>
 
               {/* SDK Reference */}
-              <section id="sdk" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">SDK Reference</h2>
+              <section id="sdk" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">SDK Reference</h2>
                 
                 <div className="space-y-6">
                   <div>
@@ -263,8 +263,8 @@ console.log('Task created:', task.task.id)
               </section>
 
               {/* Examples */}
-              <section id="examples" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">Examples</h2>
+              <section id="examples" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Examples</h2>
                 
                 <div className="space-y-8">
                   <div>
@@ -333,11 +333,11 @@ const task = await sdk.createTask({
               </section>
 
               {/* Pricing */}
-              <section id="pricing" className="mb-12">
-                <h2 className="text-3xl font-bold mb-4">Pricing</h2>
+              <section id="pricing" className="mb-8 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Pricing</h2>
                 
-                <div className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-lg p-6">
-                  <table className="w-full">
+                <div className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-lg p-4 md:p-6 overflow-x-auto">
+                  <table className="w-full min-w-[500px]">
                     <thead>
                       <tr className="border-b border-white/10">
                         <th className="text-left py-3 text-purple-400">Endpoint</th>

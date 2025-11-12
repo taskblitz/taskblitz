@@ -79,7 +79,7 @@ export function RatingModal({
       />
 
       {/* Modal */}
-      <div className="relative bg-gray-900 border border-white/20 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+      <div className="relative bg-gray-900 border border-white/20 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
