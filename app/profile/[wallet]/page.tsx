@@ -42,33 +42,24 @@ interface Rating {
   }
 }
 
-export default function ProfilePage({ params }: { params: Promise<{ wallet: string }> }) {
+export default function ProfilePage({ params }: { params: { wallet: string } }) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [ratings, setRatings] = useState<Rating[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'requester' | 'worker'>('requester')
-  const [wallet, setWallet] = useState<string | null>(null)
 
   useEffect(() => {
-    params.then((p) => setWallet(p.wallet))
-  }, [params])
-
-  useEffect(() => {
-    if (wallet) {
-      fetchProfile()
-    }
-  }, [wallet])
+    fetchProfile()
+  }, [params.wallet])
 
   const fetchProfile = async () => {
-    if (!wallet) return
-    
     setLoading(true)
     try {
       // Fetch user profile
       const { data: user, error: userError } = await supabase
         .from('users')
         .select('*')
-        .eq('wallet_address', wallet)
+        .eq('wallet_address', params.wallet)
         .single()
 
       if (userError) throw userError
