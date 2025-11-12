@@ -411,7 +411,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
                   setSubmissionFileType(type)
                 }}
                 accept="image/*,.pdf"
-                maxSizeMB={10}
+                maxSizeMB={2}
               />
             )}
             

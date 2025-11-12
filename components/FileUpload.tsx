@@ -15,7 +15,7 @@ interface FileUploadProps {
   maxSizeMB?: number
 }
 
-export function FileUpload({ onFileUploaded, accept = 'image/*,.pdf', maxSizeMB = 10 }: FileUploadProps) {
+export function FileUpload({ onFileUploaded, accept = 'image/*,.pdf', maxSizeMB = 2 }: FileUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)

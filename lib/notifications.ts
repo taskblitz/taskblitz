@@ -54,7 +54,7 @@ export async function createNotification(data: NotificationData) {
 }
 
 /**
- * Send email notification (placeholder - integrate with your email service)
+ * Send email notification via Resend
  */
 async function sendEmail(data: {
   to: string
@@ -62,41 +62,52 @@ async function sendEmail(data: {
   body: string
   link?: string
 }) {
-  // TODO: Integrate with email service (SendGrid, Resend, etc.)
-  // For now, just log
-  console.log('📧 Email would be sent:', {
-    to: data.to,
-    subject: data.subject,
-    body: data.body,
-    link: data.link,
-  })
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'TaskBlitz <onboarding@resend.dev>', // Change to notifications@taskblitz.click after domain verification
+        to: data.to,
+        subject: data.subject,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(to right, #8b5cf6, #06b6d4); padding: 30px; border-radius: 12px 12px 0 0;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">TaskBlitz</h1>
+            </div>
+            <div style="background: #1a1a1a; padding: 30px; border-radius: 0 0 12px 12px;">
+              <h2 style="color: #8b5cf6; margin-top: 0;">${data.subject}</h2>
+              <p style="color: #e5e7eb; line-height: 1.6;">${data.body}</p>
+              ${data.link ? `
+                <a href="${data.link}" style="display: inline-block; background: linear-gradient(to right, #8b5cf6, #06b6d4); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 16px; font-weight: 600;">
+                  View Details →
+                </a>
+              ` : ''}
+              <hr style="margin: 32px 0; border: none; border-top: 1px solid #333;" />
+              <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                TaskBlitz - Complete micro-tasks & earn crypto instantly<br/>
+                <a href="https://taskblitz.click" style="color: #06b6d4; text-decoration: none;">taskblitz.click</a>
+              </p>
+            </div>
+          </div>
+        `,
+      }),
+    })
 
-  // Example with Resend (uncomment when you have API key):
-  /*
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'TaskBlitz <notifications@taskblitz.click>',
-      to: data.to,
-      subject: data.subject,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #8b5cf6;">${data.subject}</h2>
-          <p>${data.body}</p>
-          ${data.link ? `<a href="${data.link}" style="display: inline-block; background: linear-gradient(to right, #8b5cf6, #06b6d4); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 16px;">View Details</a>` : ''}
-          <hr style="margin: 32px 0; border: none; border-top: 1px solid #e5e7eb;" />
-          <p style="color: #6b7280; font-size: 14px;">TaskBlitz - Micro-tasks on Solana</p>
-        </div>
-      `,
-    }),
-  })
-  */
+    if (!response.ok) {
+      throw new Error(`Resend API error: ${response.statusText}`)
+    }
 
-  return { success: true }
+    const result = await response.json()
+    console.log('✅ Email sent successfully:', result.id)
+    return { success: true, id: result.id }
+  } catch (error) {
+    console.error('❌ Failed to send email:', error)
+    return { success: false, error }
+  }
 }
 
 /**
