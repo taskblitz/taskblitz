@@ -36,6 +36,10 @@ export function Header() {
               <Link href="/" className="text-text-secondary hover:text-white transition-colors">
                 Browse Tasks
               </Link>
+              <Link href="/developers" className="text-text-secondary hover:text-white transition-colors flex items-center gap-1">
+                <span>🤖</span>
+                <span>Developers</span>
+              </Link>
               {connected && (
                 <>
                   <Link href="/post-task" className="text-text-secondary hover:text-white transition-colors">
@@ -99,6 +103,13 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Browse Tasks
+              </Link>
+              <Link 
+                href="/developers" 
+                className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🤖 Developers
               </Link>
               {connected && (
                 <>

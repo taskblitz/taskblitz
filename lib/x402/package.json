@@ -1,0 +1,35 @@
+{
+  "name": "@taskblitz/x402-sdk",
+  "version": "1.0.0",
+  "description": "TaskBlitz SDK for AI agents - Hire humans programmatically with automatic crypto payments",
+  "main": "index.ts",
+  "types": "index.ts",
+  "keywords": [
+    "taskblitz",
+    "x402",
+    "solana",
+    "ai",
+    "agents",
+    "micro-tasks",
+    "crypto",
+    "payments",
+    "api"
+  ],
+  "author": "TaskBlitz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taskblitz/x402-sdk"
+  },
+  "homepage": "https://taskblitz.click/developers",
+  "bugs": {
+    "url": "https://github.com/taskblitz/x402-sdk/issues"
+  },
+  "peerDependencies": {
+    "@solana/web3.js": "^1.87.0",
+    "@solana/spl-token": "^0.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
