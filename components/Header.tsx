@@ -3,7 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { Menu, X, ChevronDown, LayoutDashboard, ListTodo, MessageSquare } from 'lucide-react'
 
 
 export function Header() {
@@ -53,28 +53,34 @@ export function Header() {
                   </button>
                   
                   {userMenuOpen && (
-                    <div className="absolute top-full mt-2 right-0 w-48 glass-card border border-white/20 rounded-lg shadow-xl py-2">
+                    <div className="absolute top-full mt-2 right-0 w-56 glass-card border border-purple-500/30 rounded-xl shadow-2xl py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-2 border-b border-white/10">
+                        <p className="text-xs text-gray-400 uppercase tracking-wider">Account</p>
+                      </div>
                       <Link 
                         href="/dashboard" 
-                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        className="flex items-center gap-3 text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-cyan-500/20 transition-all py-3 px-4 group"
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        Dashboard
+                        <LayoutDashboard className="w-4 h-4 text-purple-400 group-hover:text-purple-300" />
+                        <span>Dashboard</span>
                       </Link>
                       <Link 
                         href="/my-tasks" 
-                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        className="flex items-center gap-3 text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-cyan-500/20 transition-all py-3 px-4 group"
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        My Tasks
+                        <ListTodo className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300" />
+                        <span>My Tasks</span>
                       </Link>
                       <div className="border-t border-white/10 my-2" />
                       <Link 
                         href="/feedback" 
-                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        className="flex items-center gap-3 text-white hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-cyan-500/20 transition-all py-3 px-4 group"
                         onClick={() => setUserMenuOpen(false)}
                       >
-                        Feedback
+                        <MessageSquare className="w-4 h-4 text-gray-400 group-hover:text-gray-300" />
+                        <span>Feedback</span>
                       </Link>
                     </div>
                   )}
