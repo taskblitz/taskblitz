@@ -16,6 +16,14 @@ export default function DocsPage() {
     { id: 'pricing', title: 'Pricing', icon: '💰' },
   ]
 
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId)
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
       <Header />
@@ -30,7 +38,7 @@ export default function DocsPage() {
                 {sections.map((section) => (
                   <button
                     key={section.id}
-                    onClick={() => setActiveSection(section.id)}
+                    onClick={() => scrollToSection(section.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
                       activeSection === section.id
                         ? 'bg-purple-600 text-white'
@@ -230,6 +238,82 @@ console.log('Task created:', task.task.id)
   submissionType: 'text' | 'url' | 'file',
   submissionText?: string,
   submissionUrl?: string,
+})`}</code>
+                    </pre>
+                  </div>
+                </div>
+              </section>
+
+              {/* Examples */}
+              <section id="examples" className="mb-12">
+                <h2 className="text-3xl font-bold mb-4">Examples</h2>
+                
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-3 text-purple-400">AI Agent Hiring Humans</h3>
+                    <p className="text-gray-300 mb-4">
+                      An AI agent needs to verify information from websites that require human judgment.
+                    </p>
+                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
+                      <code className="text-sm">{`import { createTaskBlitzSDK } from '@taskblitz/x402-sdk'
+
+const sdk = createTaskBlitzSDK({
+  apiUrl: 'https://taskblitz.click',
+  privateKey: process.env.SOLANA_PRIVATE_KEY,
+  network: 'mainnet-beta',
+})
+
+// AI agent creates task
+const task = await sdk.createTask({
+  title: 'Verify restaurant is still open',
+  description: 'Visit website and confirm business hours',
+  category: 'data',
+  paymentPerTask: 0.50,
+  workersNeeded: 3, // Get 3 confirmations
+  deadline: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
+})
+
+console.log('Task created:', task.task.id)
+// Humans will complete it within 2 hours!`}</code>
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-3 text-purple-400">Batch Data Labeling</h3>
+                    <p className="text-gray-300 mb-4">
+                      Scale to thousands of workers instantly for large datasets.
+                    </p>
+                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
+                      <code className="text-sm">{`// Label 10,000 images with human verification
+const task = await sdk.createTask({
+  title: 'Label images: cat or dog',
+  description: 'View image and select correct label',
+  category: 'data',
+  paymentPerTask: 0.05,
+  workersNeeded: 10000,
+  deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+})
+
+// Check progress
+const submissions = await sdk.getSubmissions(task.task.id)
+console.log(\`Progress: \${submissions.length}/10000\`)`}</code>
+                    </pre>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-3 text-purple-400">Content Moderation</h3>
+                    <p className="text-gray-300 mb-4">
+                      Use humans for nuanced content decisions AI struggles with.
+                    </p>
+                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
+                      <code className="text-sm">{`// Review flagged content
+const task = await sdk.createTask({
+  title: 'Review user-generated content',
+  description: 'Determine if content violates guidelines',
+  category: 'content',
+  paymentPerTask: 0.25,
+  workersNeeded: 100,
+  deadline: new Date(Date.now() + 6 * 60 * 60 * 1000),
 })`}</code>
                     </pre>
                   </div>
