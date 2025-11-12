@@ -122,7 +122,7 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center py-20">
             <h2 className="text-2xl font-bold mb-4">User Not Found</h2>
-            <p className="text-gray-400 mb-6">This wallet address doesn't have a profile yet</p>
+            <p className="text-gray-400 mb-6">This wallet address doesn&apos;t have a profile yet</p>
             <Link href="/" className="text-cyan-400 hover:text-cyan-300">
               ← Back to Home
             </Link>
