@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { Star, Briefcase, CheckCircle, TrendingUp, Calendar } from 'lucide-react'
 import Link from 'next/link'
-import { use } from 'react'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -44,24 +43,32 @@ interface Rating {
 }
 
 export default function ProfilePage({ params }: { params: Promise<{ wallet: string }> }) {
-  const resolvedParams = use(params)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [ratings, setRatings] = useState<Rating[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'requester' | 'worker'>('requester')
+  const [wallet, setWallet] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchProfile()
-  }, [resolvedParams.wallet])
+    params.then((p) => setWallet(p.wallet))
+  }, [params])
+
+  useEffect(() => {
+    if (wallet) {
+      fetchProfile()
+    }
+  }, [wallet])
 
   const fetchProfile = async () => {
+    if (!wallet) return
+    
     setLoading(true)
     try {
       // Fetch user profile
       const { data: user, error: userError } = await supabase
         .from('users')
         .select('*')
-        .eq('wallet_address', resolvedParams.wallet)
+        .eq('wallet_address', wallet)
         .single()
 
       if (userError) throw userError
