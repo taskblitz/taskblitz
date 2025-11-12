@@ -68,6 +68,13 @@ export function Header() {
                       >
                         My Tasks
                       </Link>
+                      <Link 
+                        href="/transactions" 
+                        className="block text-white hover:bg-purple-600/80 transition-colors py-2.5 px-4"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Transactions
+                      </Link>
                       <div className="border-t border-white/10 my-2" />
                       <Link 
                         href="/feedback" 

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { getTaskById, submitWork } from '@/lib/database'
 import { useUser } from '@/contexts/UserContext'
 import toast from 'react-hot-toast'
+import { FileUpload } from './FileUpload'
 
 interface TaskDetailProps {
   taskId: string
@@ -56,7 +57,10 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
   const [showSubmissionModal, setShowSubmissionModal] = useState(false)
   const [submissionText, setSubmissionText] = useState('')
   const [submissionUrl, setSubmissionUrl] = useState('')
-  const [submissionFile, setSubmissionFile] = useState<File | null>(null)
+  const [submissionFileUrl, setSubmissionFileUrl] = useState('')
+  const [submissionFileName, setSubmissionFileName] = useState('')
+  const [submissionFileSize, setSubmissionFileSize] = useState(0)
+  const [submissionFileType, setSubmissionFileType] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -160,12 +164,14 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
       }
       submissionData.submissionUrl = submissionUrl.trim()
     } else if (task.submissionType === 'file') {
-      if (!submissionFile) {
-        toast.error('Please select a file to upload')
+      if (!submissionFileUrl) {
+        toast.error('Please upload a file')
         return
       }
-      // TODO: Upload file to Supabase Storage and get URL
-      submissionData.submissionFileUrl = 'uploaded_file_url'
+      submissionData.submissionFileUrl = submissionFileUrl
+      submissionData.fileName = submissionFileName
+      submissionData.fileSize = submissionFileSize
+      submissionData.fileType = submissionFileType
     }
 
     try {
@@ -175,7 +181,8 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
       setShowSubmissionModal(false)
       setSubmissionText('')
       setSubmissionUrl('')
-      setSubmissionFile(null)
+      setSubmissionFileUrl('')
+      setSubmissionFileName('')
       toast.success('Work submitted successfully! You will be notified when reviewed.')
       
       // Refresh task data to show updated count
@@ -396,23 +403,16 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
             )}
             
             {task.submissionType === 'file' && (
-              <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center">
-                <input
-                  type="file"
-                  onChange={(e) => setSubmissionFile(e.target.files?.[0] || null)}
-                  className="hidden"
-                  id="file-upload"
-                  accept="image/*,.pdf,.doc,.docx"
-                />
-                <label htmlFor="file-upload" className="cursor-pointer">
-                  <div className="text-text-secondary">
-                    {submissionFile ? submissionFile.name : 'Click to select file'}
-                  </div>
-                  <div className="text-xs text-text-muted mt-1">
-                    Images, PDF, or documents
-                  </div>
-                </label>
-              </div>
+              <FileUpload
+                onFileUploaded={(url, name, size, type) => {
+                  setSubmissionFileUrl(url)
+                  setSubmissionFileName(name)
+                  setSubmissionFileSize(size)
+                  setSubmissionFileType(type)
+                }}
+                accept="image/*,.pdf"
+                maxSizeMB={10}
+              />
             )}
             
             <div className="flex space-x-4 mt-6">
