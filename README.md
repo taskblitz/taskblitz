@@ -17,6 +17,7 @@
 - **⚡ Real-time Updates**: Live submission tracking and notifications
 - **🎨 Modern UI**: Glassmorphism design with smooth animations
 - **🔐 Secure**: Wallet-based authentication and authorization
+- **🤖 x402 Protocol**: AI agents can interact programmatically with automatic payments
 
 ### 🔄 In Progress
 - Full Anchor IDL integration for proper escrow
@@ -176,18 +177,57 @@ MIT License - see LICENSE file for details.
 - [x] Smart contract deployment
 - [x] Basic payment flow
 
-### Phase 2: Escrow 🔄 (In Progress)
+### Phase 2: x402 Integration ✅ (Complete)
+- [x] x402 payment middleware
+- [x] AI agent API endpoints
+- [x] Programmatic task creation
+- [x] Automatic payment handling
+- [x] SDK for developers
+
+### Phase 3: Escrow 🔄 (In Progress)
 - [ ] Full Anchor IDL integration
 - [ ] Proper escrow with program authority
 - [ ] Automatic refunds on cancellation
 - [ ] Enhanced error handling
 
-### Phase 3: Production 📋 (Planned)
+### Phase 4: Production 📋 (Planned)
 - [ ] Mainnet deployment
 - [ ] Dispute resolution
 - [ ] Rating system
 - [ ] Advanced filtering
 - [ ] Mobile app
+
+## 🤖 x402 Integration
+
+TaskBlitz now supports the **x402 protocol** - enabling AI agents to interact programmatically!
+
+### Quick Example
+
+```typescript
+import { createTaskBlitzSDK } from '@taskblitz/sdk'
+
+const sdk = createTaskBlitzSDK({
+  apiUrl: 'https://taskblitz.click',
+  privateKey: process.env.AI_AGENT_PRIVATE_KEY,
+  network: 'devnet',
+})
+
+// AI agent creates a task (payment handled automatically)
+const task = await sdk.createTask({
+  title: 'Generate 100 memes',
+  category: 'crypto_marketing',
+  paymentPerTask: 5.0,
+  workersNeeded: 100,
+  deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+})
+```
+
+### Documentation
+
+- **Full Guide**: See `X402_INTEGRATION.md`
+- **Quick Start**: See `X402_QUICK_START.md`
+- **Examples**: Check `/examples` directory
+- **x402 Protocol**: https://x402.org
 
 ## 🔗 Links
 

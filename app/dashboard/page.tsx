@@ -161,25 +161,25 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <div className="mb-4 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-              <p className="text-text-secondary">Track your TaskBlitz activity and earnings</p>
+              <h1 className="text-2xl md:text-3xl font-bold mb-1">Dashboard</h1>
+              <p className="text-sm md:text-base text-text-secondary">Track your TaskBlitz activity and earnings</p>
             </div>
             
             {/* Username Editor */}
-            <div className="glass-card p-4">
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-text-muted">Username:</span>
+            <div className="glass-card p-3 md:p-4">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <span className="text-xs md:text-sm text-text-muted">Username:</span>
                 {editingUsername ? (
                   <div className="flex items-center space-x-2">
                     <input
                       type="text"
                       value={newUsername}
                       onChange={(e) => setNewUsername(e.target.value)}
-                      className="bg-transparent border border-white/20 rounded px-2 py-1 text-sm focus:border-purple-400 focus:outline-none"
+                      className="bg-transparent border border-white/20 rounded px-2 py-1 text-sm focus:border-purple-400 focus:outline-none w-32"
                       placeholder="Enter username"
                       maxLength={20}
                     />
@@ -200,12 +200,12 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium">@{user?.username || 'Loading...'}</span>
+                    <span className="font-medium text-sm md:text-base">@{user?.username || 'Loading...'}</span>
                     <button
                       onClick={() => setEditingUsername(true)}
                       className="p-1 text-purple-400 hover:text-purple-300"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit3 className="w-3 h-3 md:w-4 md:h-4" />
                     </button>
                   </div>
                 )}
@@ -220,69 +220,76 @@ export default function Dashboard() {
             <span className="ml-2 text-text-secondary">Loading dashboard...</span>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-4 md:space-y-8">
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
               {/* Total Earned */}
-              <div className="glass-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-green-500/20 rounded-lg">
-                    <DollarSign className="w-5 h-5 text-green-400" />
+              <div className="glass-card p-3 md:p-6">
+                <div className="flex items-start justify-between mb-2 md:mb-4">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <div className="p-1.5 md:p-2 bg-green-500/20 rounded-lg flex-shrink-0">
+                      <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-lg md:text-2xl font-bold text-green-400 leading-tight">${stats.totalEarned.toFixed(2)}</p>
+                      <p className="text-xs md:text-sm text-text-muted mt-0.5">Total Earned</p>
+                    </div>
                   </div>
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold text-green-400">${stats.totalEarned.toFixed(2)}</p>
-                  <p className="text-sm text-text-muted">Total Earned</p>
                 </div>
               </div>
 
               {/* Tasks Posted */}
-              <div className="glass-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-purple-500/20 rounded-lg">
-                    <Briefcase className="w-5 h-5 text-purple-400" />
+              <div className="glass-card p-3 md:p-6">
+                <div className="flex items-start justify-between mb-2 md:mb-4">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <div className="p-1.5 md:p-2 bg-purple-500/20 rounded-lg flex-shrink-0">
+                      <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-lg md:text-2xl font-bold leading-tight">{stats.tasksPosted}</p>
+                      <p className="text-xs md:text-sm text-text-muted mt-0.5">Tasks Posted</p>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold">{stats.tasksPosted}</p>
-                  <p className="text-sm text-text-muted">Tasks Posted</p>
                 </div>
               </div>
 
               {/* Tasks Completed */}
-              <div className="glass-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-cyan-500/20 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-cyan-400" />
+              <div className="glass-card p-3 md:p-6">
+                <div className="flex items-start justify-between mb-2 md:mb-4">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <div className="p-1.5 md:p-2 bg-cyan-500/20 rounded-lg flex-shrink-0">
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
+                    </div>
+                    <div>
+                      <p className="text-lg md:text-2xl font-bold leading-tight">{stats.tasksCompleted}</p>
+                      <p className="text-xs md:text-sm text-text-muted mt-0.5">Tasks Completed</p>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold">{stats.tasksCompleted}</p>
-                  <p className="text-sm text-text-muted">Tasks Completed</p>
                 </div>
               </div>
 
               {/* Success Rate */}
-              <div className="glass-card p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-2 bg-yellow-500/20 rounded-lg">
-                    <Star className="w-5 h-5 text-yellow-400" />
+              <div className="glass-card p-3 md:p-6">
+                <div className="flex items-start justify-between mb-2 md:mb-4">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <div className="p-1.5 md:p-2 bg-yellow-500/20 rounded-lg flex-shrink-0">
+                      <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
+                    </div>
+                    <div>
+                      <p className="text-lg md:text-2xl font-bold leading-tight">{stats.successRate}%</p>
+                      <p className="text-xs md:text-sm text-text-muted mt-0.5">Success Rate</p>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold">{stats.successRate}%</p>
-                  <p className="text-sm text-text-muted">Success Rate</p>
                 </div>
               </div>
             </div>
 
             {/* Activity Overview */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
               {/* Recent Activity */}
-              <div className="glass-card p-6">
-                <h2 className="text-xl font-semibold mb-4 flex items-center">
-                  <Clock className="w-5 h-5 mr-2" />
+              <div className="glass-card p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center">
+                  <Clock className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                   Recent Activity
                 </h2>
                 <div className="space-y-4">
@@ -329,50 +336,50 @@ export default function Dashboard() {
               </div>
 
               {/* Quick Actions */}
-              <div className="glass-card p-6">
-                <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+              <div className="glass-card p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Quick Actions</h2>
                 <div className="space-y-4">
                   <Link 
                     href="/post-task"
-                    className="flex items-center justify-between p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
+                    className="flex items-center justify-between p-3 md:p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
                   >
                     <div className="flex items-center">
-                      <div className="p-2 bg-purple-500/20 rounded-lg mr-3">
+                      <div className="p-1.5 md:p-2 bg-purple-500/20 rounded-lg mr-2 md:mr-3">
                         <Briefcase className="w-4 h-4 text-purple-400" />
                       </div>
                       <div>
-                        <p className="font-medium">Post New Task</p>
-                        <p className="text-sm text-text-muted">Get work done by skilled freelancers</p>
+                        <p className="font-medium text-sm md:text-base">Post New Task</p>
+                        <p className="text-xs md:text-sm text-text-muted">Get work done by skilled freelancers</p>
                       </div>
                     </div>
                   </Link>
 
                   <Link 
                     href="/"
-                    className="flex items-center justify-between p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
+                    className="flex items-center justify-between p-3 md:p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
                   >
                     <div className="flex items-center">
-                      <div className="p-2 bg-cyan-500/20 rounded-lg mr-3">
+                      <div className="p-1.5 md:p-2 bg-cyan-500/20 rounded-lg mr-2 md:mr-3">
                         <CheckCircle className="w-4 h-4 text-cyan-400" />
                       </div>
                       <div>
-                        <p className="font-medium">Browse Tasks</p>
-                        <p className="text-sm text-text-muted">Find tasks to complete and earn crypto</p>
+                        <p className="font-medium text-sm md:text-base">Browse Tasks</p>
+                        <p className="text-xs md:text-sm text-text-muted">Find tasks to complete and earn crypto</p>
                       </div>
                     </div>
                   </Link>
 
                   <Link 
                     href="/my-tasks"
-                    className="flex items-center justify-between p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
+                    className="flex items-center justify-between p-3 md:p-4 glass-card hover:bg-white/10 transition-colors rounded-lg"
                   >
                     <div className="flex items-center">
-                      <div className="p-2 bg-green-500/20 rounded-lg mr-3">
+                      <div className="p-1.5 md:p-2 bg-green-500/20 rounded-lg mr-2 md:mr-3">
                         <Calendar className="w-4 h-4 text-green-400" />
                       </div>
                       <div>
-                        <p className="font-medium">My Tasks</p>
-                        <p className="text-sm text-text-muted">Manage your posted tasks and submissions</p>
+                        <p className="font-medium text-sm md:text-base">My Tasks</p>
+                        <p className="text-xs md:text-sm text-text-muted">Manage your posted tasks and submissions</p>
                       </div>
                     </div>
                   </Link>
@@ -382,8 +389,8 @@ export default function Dashboard() {
 
             {/* Spending Overview (if user has posted tasks) */}
             {stats.tasksPosted > 0 && (
-              <div className="glass-card p-6">
-                <h2 className="text-xl font-semibold mb-4">Spending Overview</h2>
+              <div className="glass-card p-4 md:p-6">
+                <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Spending Overview</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <p className="text-2xl font-bold text-red-400">${stats.totalSpent.toFixed(2)}</p>

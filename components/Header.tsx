@@ -3,70 +3,139 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 
 export function Header() {
   const { connected } = useWallet()
   const [mounted, setMounted] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  return (
-    <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 md:h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <span className="text-lg md:text-xl font-bold text-white font-inter">TaskBlitz</span>
-          </Link>
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [])
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-text-secondary hover:text-white transition-colors">
-              Browse Tasks
+  return (
+    <>
+      <header className="border-b border-white/10 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 md:h-16">
+            {/* Logo */}
+            <Link href="/" className="flex flex-col hover:opacity-80 transition-opacity">
+              <span className="text-xl md:text-xl font-bold text-white font-inter">TaskBlitz</span>
+              <span className="hidden md:block text-xs text-text-secondary">Complete micro-tasks & earn crypto instantly</span>
             </Link>
-            {connected && (
-              <>
-                <Link href="/post-task" className="text-text-secondary hover:text-white transition-colors">
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-text-secondary hover:text-white transition-colors">
+                Browse Tasks
+              </Link>
+              {connected && (
+                <>
+                  <Link href="/post-task" className="text-text-secondary hover:text-white transition-colors">
+                    Post Task
+                  </Link>
+                  <Link href="/my-tasks" className="text-text-secondary hover:text-white transition-colors">
+                    My Tasks
+                  </Link>
+                  <Link href="/dashboard" className="text-text-secondary hover:text-white transition-colors">
+                    Dashboard
+                  </Link>
+                  <Link href="/feedback" className="text-text-secondary hover:text-white transition-colors">
+                    Feedback
+                  </Link>
+                </>
+              )}
+            </nav>
+
+            {/* Right Side - Wallet + Mobile Menu */}
+            <div className="flex items-center space-x-2 md:space-x-4">
+              {connected && mounted && (
+                <Link 
+                  href="/post-task"
+                  className="hidden sm:block post-task-button text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg hover:scale-105 transition-all duration-200"
+                >
                   Post Task
                 </Link>
-                <Link href="/my-tasks" className="text-text-secondary hover:text-white transition-colors">
-                  My Tasks
-                </Link>
-                <Link href="/dashboard" className="text-text-secondary hover:text-white transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/feedback" className="text-text-secondary hover:text-white transition-colors">
-                  Feedback
-                </Link>
-              </>
-            )}
-          </nav>
-
-          {/* Wallet Connection */}
-          <div className="flex items-center space-x-2 md:space-x-4">
-            {connected && mounted && (
-              <Link 
-                href="/post-task"
-                className="hidden sm:block post-task-button text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg hover:scale-105 transition-all duration-200"
+              )}
+              {mounted ? (
+                <div className="wallet-button-container scale-90 md:scale-100">
+                  <WalletMultiButton />
+                </div>
+              ) : (
+                <div className="gradient-primary text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg">
+                  Connect Wallet
+                </div>
+              )}
+              
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                aria-label="Toggle menu"
               >
-                Post Task
-              </Link>
-            )}
-            {mounted ? (
-              <div className="wallet-button-container scale-90 md:scale-100">
-                <WalletMultiButton />
-              </div>
-            ) : (
-              <div className="gradient-primary text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg">
-                Connect Wallet
-              </div>
-            )}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <>
+          <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute top-14 right-4 w-48 glass-card border border-white/20 rounded-lg shadow-xl z-50 md:hidden">
+            <nav className="flex flex-col py-2">
+              <Link 
+                href="/" 
+                className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Browse Tasks
+              </Link>
+              {connected && (
+                <>
+                  <Link 
+                    href="/post-task" 
+                    className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Post Task
+                  </Link>
+                  <Link 
+                    href="/my-tasks" 
+                    className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Tasks
+                  </Link>
+                  <Link 
+                    href="/dashboard" 
+                    className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link 
+                    href="/feedback" 
+                    className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Feedback
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        </>
+      )}
+    </>
   )
 }

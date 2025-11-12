@@ -163,7 +163,7 @@ export async function getAllTasks(filters?: {
       .from('tasks')
       .select(`
         *,
-        requester:users!tasks_requester_id_fkey(wallet_address, username)
+        requester:users!tasks_requester_id_fkey(wallet_address, username, approval_rate, total_approved, total_rejections)
       `)
       .eq('status', 'open')
       .gt('deadline', new Date().toISOString())
@@ -515,32 +515,73 @@ export async function approveSubmission(
   }
 }
 
-export async function rejectSubmission(submissionId: string, taskId: string) {
-  const { data, error } = await supabase
-    .from('submissions')
-    .update({
-      status: 'rejected',
-      reviewed_at: new Date().toISOString()
-    })
-    .eq('id', submissionId)
-    .select()
-    .single()
+export async function rejectSubmission(
+  submissionId: string, 
+  taskId: string,
+  rejectionReason?: string
+) {
+  try {
+    // First check if rejection limit would be exceeded
+    const { data: task } = await supabase
+      .from('tasks')
+      .select('workers_completed, workers_rejected, rejection_limit_percentage, is_flagged')
+      .eq('id', taskId)
+      .single()
 
-  if (error) {
-    console.error('Error rejecting submission:', error)
+    if (!task) {
+      throw new Error('Task not found')
+    }
+
+    // Calculate current rejection rate
+    const totalReviewed = task.workers_completed
+    const currentRejectionRate = totalReviewed > 0 
+      ? (task.workers_rejected / totalReviewed) * 100 
+      : 0
+
+    // Check if adding this rejection would exceed the limit
+    const newRejectionRate = totalReviewed > 0
+      ? ((task.workers_rejected + 1) / totalReviewed) * 100
+      : 0
+
+    if (newRejectionRate >= task.rejection_limit_percentage) {
+      throw new Error(
+        `Rejection limit reached (${task.rejection_limit_percentage}%). ` +
+        `Cannot reject more submissions. Contact support if you believe this is an error.`
+      )
+    }
+
+    // Proceed with rejection
+    const { data, error } = await supabase
+      .from('submissions')
+      .update({
+        status: 'rejected',
+        reviewed_at: new Date().toISOString(),
+        rejection_reason: rejectionReason || 'No reason provided'
+      })
+      .eq('id', submissionId)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error rejecting submission:', error)
+      throw error
+    }
+
+    // Decrement workers_completed and increment workers_rejected
+    const { error: updateError } = await supabase.rpc('decrement_workers_completed', {
+      task_id: taskId
+    })
+
+    if (updateError) {
+      console.error('Error updating task count:', updateError)
+    }
+
+    console.log('Submission rejected. New rejection rate:', newRejectionRate.toFixed(2) + '%')
+    return data
+  } catch (error) {
+    console.error('Exception in rejectSubmission:', error)
     throw error
   }
-
-  // Decrement workers_completed count to reopen the spot
-  const { error: updateError } = await supabase.rpc('decrement_workers_completed', {
-    task_id: taskId
-  })
-
-  if (updateError) {
-    console.error('Error updating task count:', updateError)
-  }
-
-  return data
 }
 
 export async function getSubmissionsByWorker(walletAddress: string) {
@@ -570,6 +611,259 @@ export async function getSubmissionsByWorker(walletAddress: string) {
     return data || []
   } catch (error) {
     console.error('Exception in getSubmissionsByWorker:', error)
+    return []
+  }
+}
+
+// Dispute Management
+export async function createDispute(disputeData: {
+  submissionId: string
+  taskId: string
+  workerWallet: string
+  disputeReason: string
+  workerEvidence?: string
+}) {
+  try {
+    // Get worker and requester IDs
+    const worker = await getOrCreateUser(disputeData.workerWallet)
+    
+    const { data: task } = await supabase
+      .from('tasks')
+      .select('requester_id')
+      .eq('id', disputeData.taskId)
+      .single()
+
+    if (!task) {
+      throw new Error('Task not found')
+    }
+
+    // Check if dispute already exists for this submission
+    const { data: existingDispute } = await supabase
+      .from('disputes')
+      .select('id')
+      .eq('submission_id', disputeData.submissionId)
+      .single()
+
+    if (existingDispute) {
+      throw new Error('A dispute already exists for this submission')
+    }
+
+    // Create dispute
+    const { data, error } = await supabase
+      .from('disputes')
+      .insert({
+        submission_id: disputeData.submissionId,
+        task_id: disputeData.taskId,
+        worker_id: worker.id,
+        requester_id: task.requester_id,
+        dispute_reason: disputeData.disputeReason,
+        worker_evidence: disputeData.workerEvidence || null
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating dispute:', error)
+      throw error
+    }
+
+    console.log('Dispute created successfully:', data)
+    return data
+  } catch (error) {
+    console.error('Exception in createDispute:', error)
+    throw error
+  }
+}
+
+export async function getDisputesByWorker(walletAddress: string) {
+  try {
+    const user = await getOrCreateUser(walletAddress)
+    
+    const { data, error } = await supabase
+      .from('disputes')
+      .select(`
+        *,
+        submission:submissions(
+          id,
+          submission_text,
+          submission_url,
+          submission_file_url,
+          status,
+          rejection_reason
+        ),
+        task:tasks(
+          id,
+          title,
+          payment_per_task
+        ),
+        requester:users!disputes_requester_id_fkey(
+          wallet_address,
+          username,
+          approval_rate
+        )
+      `)
+      .eq('worker_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching worker disputes:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception in getDisputesByWorker:', error)
+    return []
+  }
+}
+
+export async function getAllDisputes(status?: 'open' | 'resolved_worker' | 'resolved_requester' | 'dismissed') {
+  try {
+    let query = supabase
+      .from('disputes')
+      .select(`
+        *,
+        submission:submissions(
+          id,
+          submission_text,
+          submission_url,
+          submission_file_url,
+          status,
+          rejection_reason,
+          submitted_at
+        ),
+        task:tasks(
+          id,
+          title,
+          payment_per_task,
+          workers_completed,
+          workers_rejected
+        ),
+        worker:users!disputes_worker_id_fkey(
+          wallet_address,
+          username,
+          reputation_score
+        ),
+        requester:users!disputes_requester_id_fkey(
+          wallet_address,
+          username,
+          approval_rate,
+          total_rejections
+        )
+      `)
+      .order('created_at', { ascending: false })
+
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching disputes:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception in getAllDisputes:', error)
+    return []
+  }
+}
+
+export async function resolveDispute(
+  disputeId: string,
+  resolution: 'resolved_worker' | 'resolved_requester' | 'dismissed',
+  adminNotes?: string,
+  adminWallet?: string
+) {
+  try {
+    let adminId = null
+    if (adminWallet) {
+      const admin = await getOrCreateUser(adminWallet)
+      adminId = admin.id
+    }
+
+    const { data, error } = await supabase
+      .from('disputes')
+      .update({
+        status: resolution,
+        admin_notes: adminNotes || null,
+        resolved_by: adminId,
+        resolved_at: new Date().toISOString()
+      })
+      .eq('id', disputeId)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error resolving dispute:', error)
+      throw error
+    }
+
+    // If resolved in favor of worker, approve the submission
+    if (resolution === 'resolved_worker' && data.submission_id) {
+      await supabase
+        .from('submissions')
+        .update({
+          status: 'approved',
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', data.submission_id)
+    }
+
+    console.log('Dispute resolved:', resolution)
+    return data
+  } catch (error) {
+    console.error('Exception in resolveDispute:', error)
+    throw error
+  }
+}
+
+// Get flagged users and tasks
+export async function getFlaggedUsers() {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('is_flagged', true)
+      .order('approval_rate', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching flagged users:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception in getFlaggedUsers:', error)
+    return []
+  }
+}
+
+export async function getFlaggedTasks() {
+  try {
+    const { data, error } = await supabase
+      .from('tasks')
+      .select(`
+        *,
+        requester:users!tasks_requester_id_fkey(
+          wallet_address,
+          username,
+          approval_rate
+        )
+      `)
+      .eq('is_flagged', true)
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching flagged tasks:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Exception in getFlaggedTasks:', error)
     return []
   }
 }

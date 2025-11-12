@@ -2,6 +2,7 @@
 import { Clock, Users, DollarSign, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { TaskStatusBadge } from './TaskStatusBadge'
+import ReputationBadge from './ReputationBadge'
 
 interface Task {
   id: string
@@ -17,6 +18,8 @@ interface Task {
   status: 'open' | 'completed' | 'expired' | 'cancelled'
   workersNeeded: number
   workersCompleted: number
+  requesterApprovalRate?: number
+  requesterTotalReviews?: number
 }
 
 interface TaskCardProps {
@@ -111,8 +114,17 @@ export function TaskCard({ task }: TaskCardProps) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="text-xs text-text-muted mr-2">
-          by <span className="text-purple-300">@{task.postedBy}</span>
+        <div className="flex items-center gap-2">
+          <div className="text-xs text-text-muted">
+            by <span className="text-purple-300">@{task.postedBy}</span>
+          </div>
+          {task.requesterApprovalRate !== undefined && (
+            <ReputationBadge 
+              approvalRate={task.requesterApprovalRate} 
+              totalReviews={task.requesterTotalReviews}
+              isCompact 
+            />
+          )}
         </div>
         {task.status === 'open' && task.workersCompleted < task.workersNeeded ? (
           <Link 

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "x402:example": "tsx examples/x402-ai-agent-example.ts",
+    "x402:test": "tsx examples/x402-test.ts"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
@@ -39,7 +41,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.19.25",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
@@ -47,6 +49,8 @@
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

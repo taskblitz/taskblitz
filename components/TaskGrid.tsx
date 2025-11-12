@@ -133,7 +133,7 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
         
         <div className="flex items-center space-x-3">
           {/* View Toggle */}
-          <div className="flex items-center glass-card rounded-lg p-1">
+          <div className="flex items-center glass-card rounded-lg p-1 h-[38px]">
             <button
               onClick={() => handleViewChange('grid')}
               className={`p-2 rounded transition-all ${
@@ -162,7 +162,7 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="glass-card px-3 py-2 text-sm bg-transparent border-white/20 rounded-lg text-white focus:border-purple-400 focus:outline-none"
+            className="glass-card px-3 py-2 text-sm bg-transparent border-white/20 rounded-lg text-white focus:border-purple-400 focus:outline-none h-[38px]"
           >
             <option value="newest" className="bg-gray-800 text-white">Newest First</option>
             <option value="reward-high" className="bg-gray-800 text-white">Highest Reward</option>
@@ -181,7 +181,7 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
         </div>
       )}
 
-      {/* List View - Horizontal Layout */}
+      {/* List View - Responsive Layout */}
       {viewMode === 'list' && (
         <div className="space-y-4">
           {tasks.map((task) => {
@@ -196,8 +196,55 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
 
             return (
               <Link key={task.id} href={`/task/${task.id}`}>
-                <div className="glass-card p-5 mb-4 hover:bg-white/10 transition-all cursor-pointer group border border-white/5">
-                  <div className="flex items-start justify-between gap-6">
+                <div className="glass-card p-3 md:p-5 mb-4 hover:bg-white/10 transition-all cursor-pointer group border border-white/5">
+                  {/* Mobile: Stacked Layout */}
+                  <div className="md:hidden">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+                          {task.category}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded-full text-green-400 bg-green-400/20">
+                          {task.status}
+                        </span>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-xl font-bold text-green-400 tabular-nums">
+                          ${task.paymentPerWorker.toFixed(2)}
+                        </div>
+                        <div className="text-[10px] text-text-muted">per completion</div>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-base font-semibold mb-1 group-hover:text-purple-300 transition-colors line-clamp-2">
+                      {task.title}
+                    </h3>
+                    
+                    <p className="text-xs text-text-secondary line-clamp-2 mb-2">
+                      {task.description}
+                    </p>
+
+                    <div className="flex items-center justify-between text-[10px] text-text-muted mb-2">
+                      <span>⏰ {formatTimeAgo(task.postedAt)}</span>
+                      <span>👥 {task.workersCompleted}/{task.workersNeeded} spots</span>
+                    </div>
+
+                    <div className="w-full">
+                      <div className="flex items-center justify-between text-xs text-text-muted mb-1">
+                        <span>Progress</span>
+                        <span>{Math.round((task.workersCompleted / task.workersNeeded) * 100)}%</span>
+                      </div>
+                      <div className="w-full bg-white/10 rounded-full h-1.5">
+                        <div 
+                          className="bg-gradient-to-r from-purple-500 to-cyan-500 h-1.5 rounded-full transition-all"
+                          style={{ width: `${Math.min((task.workersCompleted / task.workersNeeded) * 100, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Desktop: Horizontal Layout */}
+                  <div className="hidden md:flex items-start justify-between gap-6">
                     {/* Left Section */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2 flex-wrap">

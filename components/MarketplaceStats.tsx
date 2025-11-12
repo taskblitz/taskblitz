@@ -39,20 +39,22 @@ export function MarketplaceStats() {
   ]
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
       {stats.map((stat, index) => {
         const Icon = stat.icon
         return (
-          <div key={index} className="glass-card p-4 md:p-6">
-            <div className="flex items-center justify-between mb-2 md:mb-4">
-              <Icon className={`w-5 h-5 md:w-8 md:h-8 ${stat.color}`} />
-              <span className="text-xs text-green-400 font-medium">
+          <div key={index} className="glass-card p-3 md:p-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-3">
+                <Icon className={`w-5 h-5 md:w-6 md:h-6 ${stat.color} flex-shrink-0 mt-1`} />
+                <div>
+                  <p className="text-lg md:text-2xl font-bold leading-tight mb-1">{stat.value}</p>
+                  <p className="text-xs md:text-sm text-text-secondary">{stat.label}</p>
+                </div>
+              </div>
+              <span className="text-xs text-green-400 font-medium flex-shrink-0">
                 {stat.change}
               </span>
-            </div>
-            <div>
-              <p className="text-lg md:text-2xl font-bold mb-1">{stat.value}</p>
-              <p className="text-xs md:text-sm text-text-secondary">{stat.label}</p>
             </div>
           </div>
         )

@@ -1,6 +1,8 @@
 'use client'
-import { Clock, ExternalLink, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { useState } from 'react'
+import { Clock, ExternalLink, CheckCircle, XCircle, AlertCircle, Flag } from 'lucide-react'
 import Link from 'next/link'
+import DisputeModal from './DisputeModal'
 
 interface Submission {
   id: string
@@ -14,13 +16,17 @@ interface Submission {
   submissionText?: string
   submissionUrl?: string
   submissionFileUrl?: string
+  rejectionReason?: string
 }
 
 interface SubmissionCardProps {
   submission: Submission
+  onDisputeCreated?: () => void
 }
 
-export function SubmissionCard({ submission }: SubmissionCardProps) {
+export function SubmissionCard({ submission, onDisputeCreated }: SubmissionCardProps) {
+  const [showDisputeModal, setShowDisputeModal] = useState(false)
+  
   const statusConfig = {
     pending: {
       color: 'text-yellow-400 bg-yellow-400/20',
@@ -109,6 +115,13 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
         </div>
       </div>
 
+      {submission.rejectionReason && submission.status === 'rejected' && (
+        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <p className="text-sm text-red-400 font-medium mb-1">Rejection Reason:</p>
+          <p className="text-sm text-gray-300">{submission.rejectionReason}</p>
+        </div>
+      )}
+
       <div className="flex items-center justify-between pt-4 border-t border-white/10">
         <div className="flex space-x-4">
           <Link 
@@ -118,6 +131,16 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
             <ExternalLink className="w-4 h-4 mr-1" />
             View Task
           </Link>
+          
+          {submission.status === 'rejected' && (
+            <button
+              onClick={() => setShowDisputeModal(true)}
+              className="flex items-center text-orange-400 hover:text-orange-300 transition-colors text-sm"
+            >
+              <Flag className="w-4 h-4 mr-1" />
+              File Dispute
+            </button>
+          )}
         </div>
 
         <div className="flex items-center text-sm">
@@ -125,6 +148,25 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
           <span className="text-text-muted">{config.message}</span>
         </div>
       </div>
+
+      {/* Dispute Modal */}
+      <DisputeModal
+        isOpen={showDisputeModal}
+        onClose={() => setShowDisputeModal(false)}
+        submission={{
+          id: submission.id,
+          task_id: submission.taskId,
+          rejection_reason: submission.rejectionReason,
+          task: {
+            title: submission.taskTitle,
+            payment_per_task: submission.taskPayment
+          }
+        }}
+        onDisputeCreated={() => {
+          setShowDisputeModal(false)
+          onDisputeCreated?.()
+        }}
+      />
     </div>
   )
 }

@@ -26,57 +26,54 @@ export default function Marketplace() {
   return (
     <main className="min-h-screen">
       <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
-        {/* Compact Header - Mobile Optimized */}
-        <div className="mb-4 md:mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl md:text-3xl font-bold">TaskBlitz</h1>
-              <p className="text-xs md:text-sm text-text-secondary hidden sm:block">
-                Browse and complete micro-tasks, earn crypto instantly
-              </p>
-            </div>
-            {/* Stats Toggle - Mobile Only */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
+        {/* Stats Toggle & Search - Mobile Only */}
+        <div className="md:hidden mb-3">
+          <div className="flex items-center justify-end mb-2">
             <button
               onClick={() => setShowStats(!showStats)}
-              className="md:hidden text-xs text-purple-400 hover:text-purple-300 px-3 py-1 glass-card rounded-lg"
+              className="text-xs text-purple-400 hover:text-purple-300 px-3 py-1 glass-card rounded-lg"
             >
               {showStats ? 'Hide' : 'Stats'}
             </button>
           </div>
           
           {/* Search Bar - Mobile Only */}
-          <div className="mt-3 md:hidden">
-            <input
-              type="text"
-              placeholder="🔍 Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full glass-card px-3 py-2 text-sm bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white placeholder-text-muted"
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="🔍 Search tasks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full glass-card px-3 py-2 text-sm bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white placeholder-text-muted"
+          />
         </div>
         
-        {/* Stats - Hidden on Mobile by Default */}
-        <div className={`${showStats ? 'block' : 'hidden'} md:block mb-4 md:mb-8`}>
+        {/* Stats */}
+        <div className={`${showStats ? 'block' : 'hidden'} md:block mb-4 md:mb-6`}>
           <MarketplaceStats />
         </div>
 
         {/* Category Chips - Mobile Quick Filter */}
         <div className="mb-4 md:hidden">
-          <div className="flex items-center justify-between mb-3">
-            <CategoryChips 
-              selectedCategories={filters.categories}
-              onCategoryToggle={(category: string) => {
-                const newCategories = filters.categories.includes(category)
-                  ? filters.categories.filter(c => c !== category)
-                  : [...filters.categories, category]
-                setFilters({ ...filters, categories: newCategories })
-              }}
-            />
+          <div className="flex items-start gap-2">
+            <div className="flex-1 min-w-0 relative">
+              <div className="overflow-x-auto scrollbar-hide">
+                <CategoryChips 
+                  selectedCategories={filters.categories}
+                  onCategoryToggle={(category: string) => {
+                    const newCategories = filters.categories.includes(category)
+                      ? filters.categories.filter(c => c !== category)
+                      : [...filters.categories, category]
+                    setFilters({ ...filters, categories: newCategories })
+                  }}
+                />
+              </div>
+              {/* Fade gradient to indicate more content */}
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-bg-darkest to-transparent pointer-events-none" />
+            </div>
             <button
               onClick={() => setShowMobileFilters(true)}
-              className="flex-shrink-0 ml-2 glass-card px-4 py-2 rounded-full text-sm font-medium text-purple-400 hover:text-purple-300 flex items-center"
+              className="flex-shrink-0 glass-card px-3 py-2 rounded-full text-sm font-medium text-purple-400 hover:text-purple-300 flex items-center whitespace-nowrap"
             >
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />

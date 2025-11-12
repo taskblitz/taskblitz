@@ -1,0 +1,410 @@
+## **CURRENT PROTECTION IN PRD:**
+
+### **1. Auto-Approval After 72 Hours** ✅
+From the original PRD:
+> "Auto-approve if requester doesn't respond in 72 hours"
+
+**How it works:**
+- Worker submits task
+- Requester has 72 hours to review
+- If requester ignores it → **automatic approval + payment released**
+
+**This prevents:** Requester abandoning tasks to steal escrow money
+
+**BUT:** Doesn't prevent requester from mass-rejecting legitimate work
+
+***
+
+## **WHAT'S MISSING (Critical Additions Needed):**
+
+### **2. Rejection Rate Limits** ⚠️ (MUST ADD)
+
+**The Problem You Identified:**
+Requester posts 100 tasks → 100 workers complete → Requester rejects 95 → Takes money back → Scam
+
+**The Solution:**
+```sql
+-- Add to tasks table
+ALTER TABLE tasks ADD COLUMN rejection_limit_percentage INT DEFAULT 20;
+
+-- Business logic
+IF (task.workers_rejected / task.workers_completed) > 0.20 THEN
+  -- Flag task as potentially fraudulent
+  -- Block further rejections
+  -- Admin review required
+  -- Automatically approve remaining submissions
+END
+```
+
+**Rule:** 
+- Requester can reject max 20% of submissions
+- After 20% rejection rate → all future submissions auto-approve
+- Requester must provide rejection reason (logged)
+
+**Why 20%?**
+- Allows for genuine bad work (some workers will submit crap)
+- But prevents mass rejection scam
+
+***
+
+### **3. Escrow Lock Mechanism** ⚠️ (MUST ADD)
+
+**Current PRD says:**
+> "On cancellation/expiry: Refund requester"
+
+**Problem:** Requester can cancel task after workers submit, steal labor
+
+**Better Solution:**
+
+```typescript
+// Once first worker accepts task:
+task.status = 'locked'
+task.can_cancel = false
+
+// Requester CANNOT withdraw funds once ANY worker has accepted
+// Money is locked in escrow until:
+// - All workers paid, OR
+// - 72-hour auto-approval triggers, OR
+// - Admin arbitration
+```
+
+**This prevents:**
+- Posting fake task
+- Waiting for 100 submissions
+- Cancelling before paying anyone
+- Getting free labor
+
+***
+
+### **4. Reputation System** ⚠️ (MUST ADD)
+
+**Add to database:**
+```sql
+ALTER TABLE users ADD COLUMN approval_rate DECIMAL(5,2) DEFAULT 100.00;
+ALTER TABLE users ADD COLUMN total_tasks_posted INT DEFAULT 0;
+ALTER TABLE users ADD COLUMN total_rejections INT DEFAULT 0;
+ALTER TABLE users ADD COLUMN reputation_score INT DEFAULT 100;
+ALTER TABLE users ADD COLUMN is_flagged BOOLEAN DEFAULT FALSE;
+
+-- Calculate after each review:
+UPDATE users SET 
+  approval_rate = (total_approved / (total_approved + total_rejections)) * 100,
+  reputation_score = CASE
+    WHEN approval_rate >= 80 THEN 100
+    WHEN approval_rate >= 50 THEN 50
+    ELSE 0
+  END
+WHERE id = :requester_id;
+
+-- Flag bad actors:
+UPDATE users SET is_flagged = TRUE 
+WHERE approval_rate < 50 AND total_tasks_posted > 5;
+```
+
+**Display on task cards:**
+```
+Posted by: @username
+✅ 94% approval rate (47/50 tasks)
+⚠️ 45% approval rate (9/20 tasks)
+🚩 FLAGGED: Low approval rate
+```
+
+**Workers see this BEFORE accepting task** → avoid scam requesters
+
+***
+
+### **5. Dispute Resolution System** ⚠️ (MUST ADD)
+
+**New database table:**
+```sql
+CREATE TABLE disputes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  submission_id UUID REFERENCES submissions(id),
+  worker_id UUID REFERENCES users(id),
+  requester_id UUID REFERENCES users(id),
+  dispute_reason TEXT NOT NULL,
+  worker_evidence TEXT,
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'resolved_worker', 'resolved_requester', 'refunded')),
+  resolved_by UUID REFERENCES users(id), -- admin who resolved
+  created_at TIMESTAMP DEFAULT NOW(),
+  resolved_at TIMESTAMP
+);
+```
+
+**How it works:**
+
+**Worker files dispute:**
+1. Submission rejected unfairly
+2. Worker clicks "Dispute Rejection"
+3. Provides evidence (screenshots, links, explanation)
+4. Dispute goes to queue
+
+**Admin reviews:**
+1. See both sides (submission + rejection reason)
+2. Check requester's history (approval rate)
+3. Make judgment:
+   - **Approve for worker** → Payment released, requester penalized
+   - **Uphold rejection** → No payment, worker warned
+   - **Refund both** → Rare, only if unclear
+
+**Automated flags:**
+- If requester rejects >5 in a row → auto-flag for review
+- If 3+ disputes filed against same requester → auto-flag
+- If approval rate drops below 60% → auto-flag
+
+***
+
+### **6. Platform Fee Non-Refundable** ⚠️ (MUST ADD)
+
+**Critical change to escrow logic:**
+
+**Current:**
+> Requester deposits: Task payment + 10% fee
+> On cancel: Refund everything
+
+**Better:**
+```
+Requester deposits: Task payment + 10% fee
+On cancel BEFORE any submissions: Refund task payment, KEEP 5% fee
+On cancel AFTER submissions: Refund nothing, escrow locked
+```
+
+**Why:**
+- Makes posting fake tasks expensive
+- 5% cancellation fee = spam deterrent
+- If anyone worked, money is locked (no refund)
+
+***
+
+## **COMPLETE ANTI-SCAM FLOW:**
+
+### **Scenario: Scammer tries to game system**
+
+**Attempt:**
+1. Scammer posts task: "Retweet my tweet" for $5 each, 100 workers
+2. Deposits $550 (100 × $5 + 10% fee)
+3. 100 workers accept and submit
+4. Scammer tries to reject all 100 → keep $500
+
+**What actually happens:**
+
+**Step 1:** First worker accepts
+- ✅ Escrow locks (can't cancel/refund)
+
+**Step 2:** Workers submit
+- ✅ 72-hour review clock starts
+
+**Step 3:** Scammer rejects #1-20
+- ✅ Allowed (under 20% limit)
+- ⚠️ System logs rejection reasons
+
+**Step 4:** Scammer rejects #21
+- 🚨 **BLOCKED: 20% rejection limit reached**
+- 🚨 All remaining submissions auto-approved
+- 🚨 Requester flagged for review
+- 🚨 Admin notified
+
+**Step 5:** Workers #21-100 auto-approved
+- ✅ Payments released automatically
+- ✅ $400 paid to workers (80 × $5)
+- ✅ $50 platform fee kept
+
+**Step 6:** Rejected workers (#1-20) file disputes
+- ✅ Admin reviews
+- ✅ If unfair rejections → approve + penalize requester
+- ✅ Requester's reputation tanks
+
+**Step 7:** Requester account flagged
+- 🚩 Approval rate drops to 20%
+- 🚩 Future tasks show "WARNING: Low approval rate"
+- 🚩 No one accepts their tasks anymore
+- 🚩 Possible ban if pattern continues
+
+**Net result:** Scammer fails, workers protected
+
+***
+
+## **ADD TO PRD FILE (New Section):**
+
+```markdown
+## ANTI-FRAUD & DISPUTE RESOLUTION
+
+### Requester Scam Prevention
+
+**Problem:** Malicious requesters post tasks, collect work, mass-reject to avoid payment.
+
+**Solutions Implemented:**
+
+#### 1. Auto-Approval (72 Hours)
+- Submissions not reviewed within 72 hours → automatically approved
+- Payment released to worker
+- Prevents requester abandonment
+
+#### 2. Rejection Rate Limits
+- Maximum 20% rejection rate per task
+- After 20% threshold: all future submissions auto-approve
+- System flags requester for review
+- Prevents mass rejection scam
+
+**Implementation:**
+```
+-- Before allowing rejection:
+IF (task.workers_rejected / task.workers_completed) >= 0.20 THEN
+  RAISE EXCEPTION 'Rejection limit reached. Contact support for review.'
+END IF
+
+-- On 20% threshold:
+UPDATE submissions 
+SET status = 'approved', 
+    reviewed_at = NOW()
+WHERE task_id = :task_id 
+  AND status = 'pending';
+```
+
+#### 3. Escrow Lock
+- Once ANY worker accepts task → escrow locked
+- Requester cannot cancel or withdraw funds
+- Prevents "free labor" scam
+
+**Smart contract logic:**
+```
+pub fn accept_task(ctx: Context<AcceptTask>) -> Result<()> {
+    let task = &mut ctx.accounts.task;
+    task.workers_accepted += 1;
+    
+    if task.workers_accepted >= 1 {
+        task.can_cancel = false; // LOCK
+    }
+    
+    Ok(())
+}
+```
+
+#### 4. Reputation System
+- Track approval rate per requester
+- Display on all tasks
+- Workers can avoid low-reputation requesters
+
+**Reputation tiers:**
+- 🟢 90-100% = Trusted (green badge)
+- 🟡 70-89% = Average (yellow badge)
+- 🟠 50-69% = Risky (orange badge)
+- 🔴 <50% = Flagged (red warning)
+
+#### 5. Dispute Resolution
+- Workers can dispute unfair rejections
+- Admin reviews evidence
+- 3+ strikes → requester banned
+
+**Dispute flow:**
+1. Worker clicks "Dispute Rejection"
+2. Provides evidence (screenshots, links)
+3. Admin reviews within 48 hours
+4. Decision: Approve worker / Uphold rejection / Refund both
+5. Repeat offenders banned
+
+#### 6. Platform Fee Non-Refundable
+- 5% fee kept even on cancellation (pre-submission)
+- 100% escrow locked after submissions
+- Makes spam expensive
+
+### Worker Scam Prevention
+
+**Problem:** Malicious workers submit fake/low-quality work.
+
+**Solutions:**
+
+#### 1. Manual Review by Requester
+- Requester checks each submission
+- Can reject with reason
+- Up to 20% rejection allowed
+
+#### 2. Worker Reputation
+- Track completion rate
+- Track rejection rate
+- Display on worker profile
+
+**Worker reputation:**
+- Tasks completed: 247
+- Approval rate: 96%
+- Rejected: 4%
+
+Low approval rate = harder to find work
+
+#### 3. Submission Requirements
+- Task-specific proof required
+- Screenshots, URLs, files
+- Can't submit empty
+
+#### 4. Report Function
+- Requesters can report spam workers
+- 3+ reports = review
+- Banned if confirmed scammer
+
+### Admin Tools
+
+**Dashboard:** `/admin/disputes`
+
+**Features:**
+- View all open disputes
+- See requester/worker history
+- Access submission evidence
+- One-click approve/reject
+- Ban hammer for repeat offenders
+
+**Auto-flags:**
+- Requester with <60% approval rate
+- Worker with <70% approval rate
+- 5+ rejections in a row
+- 3+ disputes filed
+
+### Escalation Path
+
+**Level 1:** Automated (auto-approval, rate limits)
+**Level 2:** Flagging (low reputation warnings)
+**Level 3:** Admin review (disputes)
+**Level 4:** Bans (repeat offenders)
+
+### Monitoring
+
+**Track:**
+- Average approval rate (platform-wide)
+- Dispute volume (daily)
+- Ban rate (weekly)
+- Top flagged users
+
+**Alert if:**
+- Approval rate drops below 85% platform-wide
+- Dispute volume spikes 50%+
+- Single user gets 10+ disputes
+
+### Terms of Service
+
+**Requester agrees:**
+- Cannot cancel after first worker accepts
+- Maximum 20% rejection rate
+- Must provide rejection reasons
+- Subject to arbitration
+- Repeated violations = ban
+
+**Worker agrees:**
+- Submit genuine work
+- Provide required proof
+- Accept arbitration decisions
+- Repeated violations = ban
+```
+
+***
+
+## **BOTTOM LINE:**
+
+**Currently in PRD:** 72-hour auto-approval (basic protection)
+
+**Must add:**
+1. ✅ 20% rejection rate limit (prevents mass rejection)
+2. ✅ Escrow lock after first acceptance (prevents cancellation scam)
+3. ✅ Reputation system (transparency)
+4. ✅ Dispute resolution (appeals process)
+5. ✅ Non-refundable platform fee (spam deterrent)
+
+**With these additions:** Platform is 95% scam-proof. The 5% edge cases go to admin arbitration.
