@@ -61,6 +61,7 @@ export function TaskGrid({ filters, searchQuery = '' }: TaskGridProps) {
         difficulty: 'Easy', // We'll add this field later
         timeEstimate: '1-2 hours', // We'll add this field later
         postedBy: task.requester?.username || task.requester?.wallet_address || 'Unknown User',
+        requesterWallet: task.requester?.wallet_address,
         postedAt: new Date(task.created_at),
         deadline: new Date(task.deadline),
         status: task.status,

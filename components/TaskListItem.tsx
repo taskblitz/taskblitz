@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { ClockIcon, PersonIcon, RocketIcon } from '@radix-ui/react-icons'
+import { UsernameLink } from './UsernameLink'
 
 interface Task {
   id: string
@@ -11,6 +12,7 @@ interface Task {
   difficulty: string
   timeEstimate: string
   postedBy: string
+  requesterWallet?: string
   postedAt: Date
   deadline: Date
   status: string
@@ -81,7 +83,10 @@ export function TaskListItem({ task }: TaskListItemProps) {
                 <PersonIcon className="w-3 h-3 mr-1" />
                 <span>{task.workersCompleted}/{task.workersNeeded} spots</span>
               </div>
-              <span>by @{task.postedBy}</span>
+              <span>by <UsernameLink 
+                username={task.postedBy}
+                walletAddress={task.requesterWallet || task.postedBy}
+              /></span>
             </div>
           </div>
 

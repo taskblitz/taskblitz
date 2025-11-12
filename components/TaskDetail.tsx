@@ -9,6 +9,7 @@ import { getTaskById, submitWork } from '@/lib/database'
 import { useUser } from '@/contexts/UserContext'
 import toast from 'react-hot-toast'
 import { FileUpload } from './FileUpload'
+import { UsernameLink } from './UsernameLink'
 
 interface TaskDetailProps {
   taskId: string
@@ -79,6 +80,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
         difficulty: 'Easy', // We'll add this field later
         timeEstimate: '1-2 hours', // We'll add this field later
         postedBy: data.requester?.username || data.requester?.wallet_address || 'unknown',
+        requesterWallet: data.requester?.wallet_address,
         postedAt: new Date(data.created_at),
         deadline: new Date(data.deadline),
         status: data.status,
@@ -248,7 +250,10 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
               <div className="flex items-center">
                 <User className="w-4 h-4 mr-2" />
-                <span>by @{task.postedBy}</span>
+                <span>by <UsernameLink 
+                  username={task.postedBy}
+                  walletAddress={task.requesterWallet || task.postedBy}
+                /></span>
               </div>
               <div className="flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />

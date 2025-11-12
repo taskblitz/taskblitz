@@ -3,6 +3,7 @@ import { Clock, Users, DollarSign, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { TaskStatusBadge } from './TaskStatusBadge'
 import ReputationBadge from './ReputationBadge'
+import { UsernameLink } from './UsernameLink'
 
 interface Task {
   id: string
@@ -13,6 +14,7 @@ interface Task {
   difficulty: 'Easy' | 'Medium' | 'Hard'
   timeEstimate: string
   postedBy: string
+  requesterWallet?: string
   postedAt: Date
   deadline: Date
   status: 'open' | 'completed' | 'expired' | 'cancelled'
@@ -116,7 +118,11 @@ export function TaskCard({ task }: TaskCardProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="text-xs text-text-muted">
-            by <span className="text-purple-300">@{task.postedBy}</span>
+            by <UsernameLink 
+              username={task.postedBy}
+              walletAddress={task.requesterWallet || task.postedBy}
+              className="text-purple-300"
+            />
           </div>
           {task.requesterApprovalRate !== undefined && (
             <ReputationBadge 
