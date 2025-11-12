@@ -3,13 +3,14 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 
 
 export function Header() {
   const { connected } = useWallet()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -41,20 +42,43 @@ export function Header() {
                 <span>Developers</span>
               </Link>
               {connected && (
-                <>
-                  <Link href="/post-task" className="text-text-secondary hover:text-white transition-colors">
-                    Post Task
-                  </Link>
-                  <Link href="/my-tasks" className="text-text-secondary hover:text-white transition-colors">
-                    My Tasks
-                  </Link>
-                  <Link href="/dashboard" className="text-text-secondary hover:text-white transition-colors">
-                    Dashboard
-                  </Link>
-                  <Link href="/feedback" className="text-text-secondary hover:text-white transition-colors">
-                    Feedback
-                  </Link>
-                </>
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    onBlur={() => setTimeout(() => setUserMenuOpen(false), 200)}
+                    className="text-text-secondary hover:text-white transition-colors flex items-center gap-1"
+                  >
+                    <span>My Account</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                  
+                  {userMenuOpen && (
+                    <div className="absolute top-full mt-2 right-0 w-48 glass-card border border-white/20 rounded-lg shadow-xl py-2">
+                      <Link 
+                        href="/dashboard" 
+                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+                      <Link 
+                        href="/my-tasks" 
+                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        My Tasks
+                      </Link>
+                      <div className="border-t border-white/10 my-2" />
+                      <Link 
+                        href="/feedback" 
+                        className="block text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Feedback
+                      </Link>
+                    </div>
+                  )}
+                </div>
               )}
             </nav>
 
