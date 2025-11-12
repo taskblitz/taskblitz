@@ -3,6 +3,30 @@ import { Header } from '@/components/Header'
 import Link from 'next/link'
 import { useState } from 'react'
 
+function CodeBlock({ code, language = 'typescript' }: { code: string; language?: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="relative group">
+      <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
+        <code className="text-sm">{code}</code>
+      </pre>
+      <button
+        onClick={copyToClipboard}
+        className="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded text-sm transition-all opacity-0 group-hover:opacity-100"
+      >
+        {copied ? '✓ Copied!' : '📋 Copy'}
+      </button>
+    </div>
+  )
+}
+
 export default function DocsPage() {
   const [activeSection, setActiveSection] = useState('overview')
 
@@ -92,24 +116,24 @@ export default function DocsPage() {
                 <h2 className="text-3xl font-bold mb-4">Quick Start</h2>
                 
                 <h3 className="text-2xl font-semibold mb-3 text-purple-400">1. Install SDK</h3>
-                <pre className="bg-black/50 rounded-lg p-4 mb-6">
-                  <code className="text-green-400">npm install @taskblitz/x402-sdk</code>
-                </pre>
+                <div className="mb-6">
+                  <CodeBlock code="npm install @taskblitz/x402-sdk" language="bash" />
+                </div>
 
                 <h3 className="text-2xl font-semibold mb-3 text-purple-400">2. Initialize Client</h3>
-                <pre className="bg-black/50 rounded-lg p-4 mb-6 overflow-x-auto">
-                  <code className="text-sm">{`import { createTaskBlitzSDK } from '@taskblitz/x402-sdk'
+                <div className="mb-6">
+                  <CodeBlock code={`import { createTaskBlitzSDK } from '@taskblitz/x402-sdk'
 
 const sdk = createTaskBlitzSDK({
   apiUrl: 'https://taskblitz.click',
   privateKey: process.env.SOLANA_PRIVATE_KEY,
   network: 'devnet', // or 'mainnet-beta'
-})`}</code>
-                </pre>
+})`} />
+                </div>
 
                 <h3 className="text-2xl font-semibold mb-3 text-purple-400">3. Create Your First Task</h3>
-                <pre className="bg-black/50 rounded-lg p-4 mb-6 overflow-x-auto">
-                  <code className="text-sm">{`const task = await sdk.createTask({
+                <div className="mb-6">
+                  <CodeBlock code={`const task = await sdk.createTask({
   title: 'Label 1000 images',
   description: 'Identify objects in images',
   category: 'data',
@@ -119,8 +143,8 @@ const sdk = createTaskBlitzSDK({
 })
 
 console.log('Task created:', task.task.id)
-// Payment handled automatically!`}</code>
-                </pre>
+// Payment handled automatically!`} />
+                </div>
               </section>
 
               {/* Authentication */}
@@ -209,37 +233,31 @@ console.log('Task created:', task.task.id)
                   <div>
                     <h3 className="text-2xl font-semibold mb-3 text-purple-400">createTask()</h3>
                     <p className="text-gray-300 mb-3">Create a new task with automatic payment handling.</p>
-                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm">{`await sdk.createTask({
+                    <CodeBlock code={`await sdk.createTask({
   title: string,
   description: string,
   category: 'data' | 'content' | 'testing' | 'crypto_marketing' | 'ecommerce' | 'other',
   paymentPerTask: number,
   workersNeeded: number,
   deadline: Date,
-})`}</code>
-                    </pre>
+})`} />
                   </div>
 
                   <div>
                     <h3 className="text-2xl font-semibold mb-3 text-purple-400">listTasks()</h3>
                     <p className="text-gray-300 mb-3">Get list of available tasks.</p>
-                    <pre className="bg-black/50 rounded-lg p-4">
-                      <code className="text-sm">const tasks = await sdk.listTasks()</code>
-                    </pre>
+                    <CodeBlock code="const tasks = await sdk.listTasks()" />
                   </div>
 
                   <div>
                     <h3 className="text-2xl font-semibold mb-3 text-purple-400">submitWork()</h3>
                     <p className="text-gray-300 mb-3">Submit work for a task.</p>
-                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm">{`await sdk.submitWork({
+                    <CodeBlock code={`await sdk.submitWork({
   taskId: string,
   submissionType: 'text' | 'url' | 'file',
   submissionText?: string,
   submissionUrl?: string,
-})`}</code>
-                    </pre>
+})`} />
                   </div>
                 </div>
               </section>
@@ -254,8 +272,7 @@ console.log('Task created:', task.task.id)
                     <p className="text-gray-300 mb-4">
                       An AI agent needs to verify information from websites that require human judgment.
                     </p>
-                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm">{`import { createTaskBlitzSDK } from '@taskblitz/x402-sdk'
+                    <CodeBlock code={`import { createTaskBlitzSDK } from '@taskblitz/x402-sdk'
 
 const sdk = createTaskBlitzSDK({
   apiUrl: 'https://taskblitz.click',
@@ -274,8 +291,7 @@ const task = await sdk.createTask({
 })
 
 console.log('Task created:', task.task.id)
-// Humans will complete it within 2 hours!`}</code>
-                    </pre>
+// Humans will complete it within 2 hours!`} />
                   </div>
 
                   <div>
@@ -283,8 +299,7 @@ console.log('Task created:', task.task.id)
                     <p className="text-gray-300 mb-4">
                       Scale to thousands of workers instantly for large datasets.
                     </p>
-                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm">{`// Label 10,000 images with human verification
+                    <CodeBlock code={`// Label 10,000 images with human verification
 const task = await sdk.createTask({
   title: 'Label images: cat or dog',
   description: 'View image and select correct label',
@@ -296,8 +311,7 @@ const task = await sdk.createTask({
 
 // Check progress
 const submissions = await sdk.getSubmissions(task.task.id)
-console.log(\`Progress: \${submissions.length}/10000\`)`}</code>
-                    </pre>
+console.log(\`Progress: \${submissions.length}/10000\`)`} />
                   </div>
 
                   <div>
@@ -305,8 +319,7 @@ console.log(\`Progress: \${submissions.length}/10000\`)`}</code>
                     <p className="text-gray-300 mb-4">
                       Use humans for nuanced content decisions AI struggles with.
                     </p>
-                    <pre className="bg-black/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm">{`// Review flagged content
+                    <CodeBlock code={`// Review flagged content
 const task = await sdk.createTask({
   title: 'Review user-generated content',
   description: 'Determine if content violates guidelines',
@@ -314,8 +327,7 @@ const task = await sdk.createTask({
   paymentPerTask: 0.25,
   workersNeeded: 100,
   deadline: new Date(Date.now() + 6 * 60 * 60 * 1000),
-})`}</code>
-                    </pre>
+})`} />
                   </div>
                 </div>
               </section>
