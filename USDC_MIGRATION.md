@@ -1,66 +1,60 @@
-# USDC Migration Complete
+# Dual Currency Support: SOL + USDC
 
-## Changes Made
+## Current Setup
 
-### 1. Payment Currency
-- **Switched from SOL to USDC** as the primary payment currency
-- USDC provides 1:1 parity with USD (no exchange rate fluctuations)
-- SOL support temporarily removed (can be re-added later with price oracle)
+### 1. Payment Currencies
+- **SOL (Primary)** - For Devnet testing with live price API
+- **USDC (Secondary)** - Stablecoin option with 1:1 USD parity
+- Users can choose which currency to use when posting tasks
 
-### 2. Code Updates
-- `lib/anchor-client.ts`: Updated default currency to USDC
-- `lib/database.ts`: Updated currency type to USDC only
-- `components/PostTaskForm.tsx`: Removed currency selector, hardcoded to USDC
-- `components/USDCInfo.tsx`: New component showing USDC payment info
+### 2. SOL Price API (CoinGecko - Free)
+- `lib/solana-price.ts`: Real-time SOL/USD price fetching
+- Updates every 60 seconds (cached)
+- Fallback to $150 if API fails
+- No API key required for CoinGecko free tier
 
-### 3. Database Changes
-- `supabase-add-currency.sql`: Updated default to USDC
-- `supabase-setup.sql`: Updated transactions table default to USDC
-- `supabase-migrate-to-usdc.sql`: Migration script to update existing data
+### 3. Code Updates
+- `lib/anchor-client.ts`: Supports both SOL and USDC
+- `lib/solana.ts`: Added live price conversion functions
+- `lib/database.ts`: Currency type supports both
+- `components/PostTaskForm.tsx`: Currency selector with both options
 
-### 4. SQL Migration Required
-Run this in Supabase SQL Editor:
+### 4. How It Works
+**SOL Payments:**
+- Fetches live SOL/USD rate from CoinGecko
+- Converts USD amount to SOL automatically
+- Shows "Live SOL/USD rate" in UI
+- Perfect for Devnet testing
+
+**USDC Payments:**
+- 1:1 with USD (no conversion needed)
+- Stablecoin - no volatility
+- Shows "1:1 with USD" in UI
+- Better for mainnet production
+
+### 5. Database Schema
+Both currencies supported:
 ```sql
--- Update existing tasks and transactions to USDC
-UPDATE tasks SET currency = 'USDC' WHERE currency = 'SOL' OR currency IS NULL;
-UPDATE transactions SET currency = 'USDC' WHERE currency = 'SOL' OR currency IS NULL;
-
--- Update constraints
-ALTER TABLE tasks DROP CONSTRAINT IF EXISTS tasks_currency_check;
-ALTER TABLE tasks ADD CONSTRAINT tasks_currency_check CHECK (currency IN ('USDC'));
-
-ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_currency_check;
-ALTER TABLE transactions ADD CONSTRAINT transactions_currency_check CHECK (currency IN ('USDC'));
-
--- Set defaults
-ALTER TABLE tasks ALTER COLUMN currency SET DEFAULT 'USDC';
-ALTER TABLE transactions ALTER COLUMN currency SET DEFAULT 'USDC';
+currency TEXT DEFAULT 'SOL' CHECK (currency IN ('SOL', 'USDC'))
 ```
 
-### 5. USDC Setup on Devnet
-Users need USDC in their wallets. For testing on Devnet:
-1. Get Devnet SOL from faucet
-2. Swap for Devnet USDC or use USDC faucet
-3. USDC Devnet Mint: `Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr`
-
 ### 6. Benefits
-✅ No exchange rate volatility
-✅ True 1:1 USD pricing
-✅ Easier accounting and reporting
-✅ More predictable for users
-✅ Standard in DeFi/Web3
+✅ **SOL**: Easy Devnet testing, no USDC setup needed
+✅ **USDC**: Stable pricing, no exchange rate risk
+✅ **Live Pricing**: Real-time SOL/USD rates
+✅ **User Choice**: Let users pick their preferred currency
+✅ **Fallback**: Works even if price API fails
 
-### 7. Future: Adding SOL Back
-When ready to support SOL:
-1. Integrate price oracle (Pyth, Switchboard, or Chainlink)
-2. Add real-time SOL/USD conversion
-3. Update UI to show both currencies
-4. Let users choose payment method
+### 7. For Mainnet Launch
+When moving to mainnet:
+- Consider making USDC the default
+- Keep SOL as an option
+- Or hide SOL option entirely (easy config change)
 
 ## Testing Checklist
-- [ ] Run SQL migration in Supabase
+- [ ] Test task creation with SOL (Devnet)
 - [ ] Test task creation with USDC
-- [ ] Test worker payments in USDC
-- [ ] Verify transaction history shows USDC
-- [ ] Check admin dashboard displays USDC correctly
-- [ ] Test on Devnet before mainnet
+- [ ] Verify live SOL price updates
+- [ ] Test worker payments in both currencies
+- [ ] Check transaction history shows correct currency
+- [ ] Verify price fallback works if API fails

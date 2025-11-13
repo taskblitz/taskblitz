@@ -81,10 +81,13 @@ export function lamportsToUsd(lamports: number): number {
   return sol * SOL_PRICE_USD
 }
 
-// Convert USD to payment amount (USDC only)
-export function usdToPaymentAmount(usd: number): number {
-  const { usdToUSDC } = require('./usdc')
-  return usdToUSDC(usd)
+// Convert USD to payment amount based on currency
+export function usdToPaymentAmount(usd: number, currency: 'SOL' | 'USDC'): number {
+  if (currency === 'USDC') {
+    const { usdToUSDC } = require('./usdc')
+    return usdToUSDC(usd)
+  }
+  return usdToLamports(usd)
 }
 
 // Create task with escrow
@@ -93,7 +96,7 @@ export async function createTaskWithEscrow(
   taskId: string,
   paymentPerWorker: number, // in USD
   workersNeeded: number,
-  currency: 'USDC' = 'USDC' // Only USDC supported for now
+  currency: 'SOL' | 'USDC' = 'SOL' // SOL primary for Devnet testing
 ): Promise<string> {
   try {
     const program = getProgram(wallet)
@@ -185,7 +188,7 @@ export async function approveSubmissionWithEscrow(
   submissionId: string,
   workerPubkey: PublicKey,
   paymentAmount?: number, // optional, for fallback
-  currency: 'USDC' = 'USDC' // Only USDC supported for now
+  currency: 'SOL' | 'USDC' = 'SOL' // SOL primary for Devnet testing
 ): Promise<string> {
   try {
     const program = getProgram(wallet)

@@ -17,16 +17,38 @@ const RPC_ENDPOINT = NETWORK === 'mainnet-beta'
 
 export const connection = new Connection(RPC_ENDPOINT, 'confirmed')
 
-// Convert USD to SOL (simplified - in production, use oracle)
+// Convert USD to SOL using live price (with fallback)
+export async function usdToLamportsLive(usd: number): Promise<number> {
+  try {
+    const { usdToLamportsLive: liveConvert } = await import('./solana-price')
+    return await liveConvert(usd)
+  } catch (error) {
+    console.error('Error using live price, falling back to static:', error)
+    return usdToLamports(usd)
+  }
+}
+
+// Synchronous fallback (for compatibility)
 export function usdToLamports(usd: number): number {
-  const SOL_PRICE_USD = 150 // Hardcoded for now
+  const SOL_PRICE_USD = 150 // Fallback price
   const sol = usd / SOL_PRICE_USD
   return Math.floor(sol * LAMPORTS_PER_SOL)
 }
 
-// Convert lamports to USD
+// Convert lamports to USD using live price (with fallback)
+export async function lamportsToUsdLive(lamports: number): Promise<number> {
+  try {
+    const { lamportsToUsdLive: liveConvert } = await import('./solana-price')
+    return await liveConvert(lamports)
+  } catch (error) {
+    console.error('Error using live price, falling back to static:', error)
+    return lamportsToUsd(lamports)
+  }
+}
+
+// Synchronous fallback (for compatibility)
 export function lamportsToUsd(lamports: number): number {
-  const SOL_PRICE_USD = 150
+  const SOL_PRICE_USD = 150 // Fallback price
   const sol = lamports / LAMPORTS_PER_SOL
   return sol * SOL_PRICE_USD
 }
