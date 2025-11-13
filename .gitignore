@@ -38,3 +38,30 @@ next-env.d.ts
 
 # SDK repo (published separately)
 x402-sdk-repo/
+
+# Documentation and status files (generated during development)
+*_COMPLETE.md
+*_SUMMARY.md
+*_GUIDE.md
+*_OVERVIEW.md
+*_MESSAGE.md
+*_CHECKLIST.md
+*_DEPLOYMENT.md
+*_STATUS.md
+*_SETUP.md
+*_IMPLEMENTATION.md
+*_QUICK_REFERENCE.md
+*_FLOW_DIAGRAM.md
+*_QUICK_START.md
+*_INTEGRATION.md
+*_FINAL.md
+*_FIXES.md
+*_ADDED.md
+READY_TO_TEST.md
+COMMIT_MESSAGE.md
+IMPLEMENTATION_SUMMARY.md
+SETUP_COMPLETE.md
+RESEND_SETUP.md
+
+# Keep README.md (main project documentation)
+!README.md
