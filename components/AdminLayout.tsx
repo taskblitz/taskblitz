@@ -24,29 +24,45 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false)
 
   useEffect(() => {
+    let isMounted = true
+
+    const checkAdmin = async () => {
+      // If already authorized, don't check again or redirect
+      if (authorized) {
+        console.log('Already authorized, skipping check')
+        return
+      }
+
+      if (!publicKey) {
+        console.log('No wallet connected')
+        if (isMounted && !authorized) {
+          setLoading(false)
+        }
+        return
+      }
+
+      console.log('Checking admin status for:', publicKey.toString())
+      const adminStatus = await isAdmin(publicKey.toString())
+      console.log('Admin status:', adminStatus)
+      
+      if (!isMounted) return
+
+      if (adminStatus) {
+        console.log('✅ Admin authorized!')
+        setAuthorized(true)
+        setLoading(false)
+      } else {
+        console.log('❌ Not authorized')
+        setLoading(false)
+      }
+    }
+
     checkAdmin()
-  }, [publicKey])
 
-  const checkAdmin = async () => {
-    if (!publicKey) {
-      console.log('No wallet connected')
-      router.push('/')
-      return
+    return () => {
+      isMounted = false
     }
-
-    console.log('Checking admin status for:', publicKey.toString())
-    const adminStatus = await isAdmin(publicKey.toString())
-    console.log('Admin status:', adminStatus)
-    
-    setAuthorized(adminStatus)
-    setLoading(false)
-
-    if (!adminStatus) {
-      console.log('Not authorized, redirecting...')
-      alert('Access denied. Your wallet is not registered as an admin.\n\nWallet: ' + publicKey.toString())
-      router.push('/')
-    }
-  }
+  }, [publicKey, authorized])
 
   if (loading) {
     return (
@@ -57,7 +73,20 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (!authorized) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-card p-8 max-w-md text-center">
+          <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+          <p className="text-text-secondary mb-4">
+            You need admin privileges to access this page.
+          </p>
+          <p className="text-xs text-text-muted">
+            Wallet: {publicKey?.toString() || 'Not connected'}
+          </p>
+        </div>
+      </div>
+    )
   }
 
 

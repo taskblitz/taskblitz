@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useRouter } from 'next/navigation'
+import { AdminLayout } from '@/components/AdminLayout'
 import { 
   AlertTriangle, 
   CheckCircle, 
@@ -48,7 +48,6 @@ interface Dispute {
 
 export default function AdminDisputesPage() {
   const { publicKey } = useWallet()
-  const router = useRouter()
   const [disputes, setDisputes] = useState<Dispute[]>([])
   const [flaggedUsers, setFlaggedUsers] = useState<any[]>([])
   const [flaggedTasks, setFlaggedTasks] = useState<any[]>([])
@@ -103,7 +102,7 @@ export default function AdminDisputesPage() {
   const resolvedDisputes = disputes.filter(d => d.status !== 'open')
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-cyan-900 py-12 px-4">
+    <AdminLayout>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -306,6 +305,6 @@ export default function AdminDisputesPage() {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   )
 }

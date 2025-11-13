@@ -2,11 +2,20 @@ import { supabase } from './supabase'
 
 // Check if user is admin
 export async function isAdmin(walletAddress: string): Promise<boolean> {
-  const { data } = await supabase
+  console.log('Checking admin for wallet:', walletAddress)
+  
+  const { data, error } = await supabase
     .from('admin_users')
     .select('id')
     .eq('wallet_address', walletAddress)
     .single()
+  
+  console.log('Admin check result:', { data, error })
+  
+  if (error) {
+    console.error('Admin check error:', error)
+    return false
+  }
   
   return !!data
 }
