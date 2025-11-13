@@ -20,7 +20,7 @@ interface TaskFormData {
   submissionType: 'text' | 'file' | 'url'
   requirements: string[]
   exampleSubmission: string
-  currency: 'SOL' | 'USDC'
+  currency: 'USDC'
 }
 
 export function PostTaskForm() {
@@ -41,7 +41,7 @@ export function PostTaskForm() {
     submissionType: 'url',
     requirements: [''],
     exampleSubmission: '',
-    currency: 'SOL'
+    currency: 'USDC'
   })
 
   useEffect(() => {
@@ -279,20 +279,14 @@ export function PostTaskForm() {
           Payment & Workers
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Currency *</label>
-            <select
-              value={formData.currency}
-              onChange={(e) => handleInputChange('currency', e.target.value)}
-              className="w-full glass-card px-4 py-3 bg-transparent border-white/20 rounded-lg focus:border-purple-400 focus:outline-none text-white"
-            >
-              <option value="SOL" className="bg-gray-800">SOL (Solana)</option>
-              <option value="USDC" className="bg-gray-800">USDC (Stablecoin)</option>
-            </select>
-            <p className="text-xs text-text-muted mt-1">Choose payment currency</p>
-          </div>
+        <div className="mb-4 flex items-center gap-2 text-sm">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+            <span className="text-green-400 font-semibold">USDC</span>
+          </span>
+          <span className="text-text-secondary">All payments in USDC (1:1 with USD)</span>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium mb-2">Payment Per Worker (USD) *</label>
             <div className="relative">

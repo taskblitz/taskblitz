@@ -254,7 +254,7 @@ export async function createTask(
     requirements: string[]
     exampleSubmission?: string
     requesterWallet: string
-    currency?: 'SOL' | 'USDC'
+    currency?: 'USDC'
   },
   onChainCreation?: (taskId: string) => Promise<string>
 ) {

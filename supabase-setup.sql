@@ -63,7 +63,7 @@ CREATE TABLE transactions (
   to_user_id UUID REFERENCES users(id),
   task_id UUID REFERENCES tasks(id),
   amount DECIMAL(10,2) NOT NULL,
-  currency TEXT DEFAULT 'SOL' CHECK (currency IN ('SOL', 'USDC')),
+  currency TEXT DEFAULT 'USDC' CHECK (currency IN ('USDC')),
   solana_tx_hash TEXT,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed')),
   created_at TIMESTAMP DEFAULT NOW()
