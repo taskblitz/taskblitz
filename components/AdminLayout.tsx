@@ -29,15 +29,21 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const checkAdmin = async () => {
     if (!publicKey) {
+      console.log('No wallet connected')
       router.push('/')
       return
     }
 
+    console.log('Checking admin status for:', publicKey.toString())
     const adminStatus = await isAdmin(publicKey.toString())
+    console.log('Admin status:', adminStatus)
+    
     setAuthorized(adminStatus)
     setLoading(false)
 
     if (!adminStatus) {
+      console.log('Not authorized, redirecting...')
+      alert('Access denied. Your wallet is not registered as an admin.\n\nWallet: ' + publicKey.toString())
       router.push('/')
     }
   }
