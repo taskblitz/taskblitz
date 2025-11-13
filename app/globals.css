@@ -87,6 +87,8 @@
   box-sizing: border-box !important;
 }
 
+
+
 .wallet-button-container .wallet-adapter-button:not([disabled]):hover,
 .wallet-button-container .wallet-adapter-button-trigger:not([disabled]):hover,
 .wallet-button-container button:not([disabled]):hover {

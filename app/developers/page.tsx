@@ -254,19 +254,7 @@ console.log('Task created:', task.task.id)`
           </div>
         </div>
 
-        {/* Support */}
-        <div className="text-center mt-12 p-8 glass-card rounded-2xl">
-          <h2 className="text-2xl font-bold mb-4">Need Help?</h2>
-          <p className="text-gray-300 mb-6">Join our developer community or reach out directly</p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a href="https://discord.gg/taskblitz" target="_blank" rel="noopener noreferrer" className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg transition-colors">
-              Discord Community
-            </a>
-            <a href="mailto:dev@taskblitz.click" className="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-lg transition-colors">
-              Email Support
-            </a>
-          </div>
-        </div>
+
       </div>
     </main>
   )
