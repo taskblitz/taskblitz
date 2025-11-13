@@ -328,7 +328,7 @@ export async function createTask(
   }
 }
 
-export async function getTasksByRequester(walletAddress: string) {
+export async function getTasksByClient(walletAddress: string) {
   try {
     // First get the user ID for this wallet
     const user = await getOrCreateUser(walletAddress)
@@ -362,10 +362,13 @@ export async function getTasksByRequester(walletAddress: string) {
     console.log('Found tasks for requester:', data?.length || 0, 'wallet:', walletAddress)
     return data || []
   } catch (error) {
-    console.error('Exception in getTasksByRequester:', error)
+    console.error('Exception in getTasksByClient:', error)
     return []
   }
 }
+
+// Alias for backwards compatibility
+export const getTasksByRequester = getTasksByClient
 
 // Submission Management
 export async function submitWork(submissionData: {

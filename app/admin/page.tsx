@@ -12,7 +12,7 @@ interface PlatformStats {
   activeTasks: number
   completedTasks: number
   totalWorkers: number
-  totalRequesters: number
+  totalClients: number
   avgTaskPayment: number
   platformRevenue: number
 }
@@ -78,7 +78,7 @@ export default function AdminPage() {
         .select('role')
 
       const totalWorkers = users?.filter(u => u.role === 'worker' || u.role === 'both').length || 0
-      const totalRequesters = users?.filter(u => u.role === 'requester' || u.role === 'both').length || 0
+      const totalClients = users?.filter(u => u.role === 'client' || u.role === 'both').length || 0
 
       setStats({
         totalUsers: totalUsers || 0,
@@ -88,7 +88,7 @@ export default function AdminPage() {
         activeTasks: activeTasks || 0,
         completedTasks: completedTasks || 0,
         totalWorkers,
-        totalRequesters,
+        totalClients,
         avgTaskPayment,
         platformRevenue
       })
@@ -104,7 +104,7 @@ export default function AdminPage() {
       .from('tasks')
       .select(`
         *,
-        requester:users!tasks_requester_id_fkey(username)
+        client:users!tasks_requester_id_fkey(username)
       `)
       .order('created_at', { ascending: false })
       .limit(10)
@@ -145,7 +145,7 @@ export default function AdminPage() {
             </div>
             <p className="text-text-secondary text-sm">Total Users</p>
             <p className="text-xs text-text-muted mt-1">
-              {stats?.totalWorkers} workers, {stats?.totalRequesters} requesters
+              {stats?.totalWorkers} workers, {stats?.totalClients} clients
             </p>
           </div>
 
@@ -232,7 +232,7 @@ export default function AdminPage() {
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Title</th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Requester</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Client</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Payment</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Workers</th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-text-secondary">Status</th>
@@ -243,7 +243,7 @@ export default function AdminPage() {
                   <tr key={task.id} className="border-b border-white/5 hover:bg-white/5">
                     <td className="py-3 px-4 text-sm">{task.title}</td>
                     <td className="py-3 px-4 text-sm text-text-secondary">
-                      @{task.requester?.username || 'Unknown'}
+                      @{task.client?.username || 'Unknown'}
                     </td>
                     <td className="py-3 px-4 text-sm">${task.payment_per_task}</td>
                     <td className="py-3 px-4 text-sm">

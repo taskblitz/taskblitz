@@ -22,7 +22,7 @@ export default function AdminTasksPage() {
       .from('tasks')
       .select(`
         *,
-        requester:users!tasks_requester_id_fkey(username, wallet_address)
+        client:users!tasks_requester_id_fkey(username, wallet_address)
       `)
       .order('created_at', { ascending: false })
 
@@ -96,7 +96,7 @@ export default function AdminTasksPage() {
                   <p className="text-text-secondary text-sm mb-3">{task.description}</p>
                   <div className="flex flex-wrap gap-4 text-sm">
                     <span className="text-text-secondary">
-                      By @{task.requester?.username}
+                      By @{task.client?.username}
                     </span>
                     <span className="text-green-400">
                       ${task.payment_per_task} per task

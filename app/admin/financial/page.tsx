@@ -35,7 +35,7 @@ export default function AdminFinancialPage() {
       .select(`
         *,
         task:tasks(title),
-        requester:users!refund_requests_requester_id_fkey(username)
+        client:users!refund_requests_requester_id_fkey(username)
       `)
       .order('created_at', { ascending: false })
     
@@ -134,7 +134,7 @@ export default function AdminFinancialPage() {
                   <div>
                     <h3 className="font-semibold text-white">{refund.task?.title}</h3>
                     <p className="text-sm text-text-secondary">
-                      Requested by @{refund.requester?.username}
+                      Requested by @{refund.client?.username}
                     </p>
                   </div>
                   <span className="text-xl font-bold text-green-400">${refund.amount}</span>

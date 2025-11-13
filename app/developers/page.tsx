@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 
 export default function DevelopersPage() {
@@ -253,9 +254,8 @@ console.log('Task created:', task.task.id)`
             </a>
           </div>
         </div>
-
-
       </div>
+      <Footer />
     </main>
   )
 }

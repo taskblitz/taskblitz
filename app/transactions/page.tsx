@@ -1,5 +1,6 @@
 'use client'
 import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
@@ -256,6 +257,7 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
+      <Footer />
     </main>
   )
 }

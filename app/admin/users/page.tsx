@@ -84,7 +84,7 @@ export default function AdminUsersPage() {
             >
               <option value="">All Roles</option>
               <option value="worker">Worker</option>
-              <option value="requester">Requester</option>
+              <option value="client">Client</option>
               <option value="both">Both</option>
             </select>
           </div>

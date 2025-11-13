@@ -1,5 +1,6 @@
 'use client'
 import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { Star, Briefcase, CheckCircle, TrendingUp, Calendar } from 'lucide-react'
@@ -21,7 +22,7 @@ interface UserProfile {
   total_earned: number
   tasks_posted: number
   tasks_completed: number
-  rating_as_requester: number
+  rating_as_client: number
   rating_as_worker: number
   total_ratings_received: number
   created_at: string
@@ -46,7 +47,7 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [ratings, setRatings] = useState<Rating[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'requester' | 'worker'>('requester')
+  const [activeTab, setActiveTab] = useState<'client' | 'worker'>('client')
 
   useEffect(() => {
     fetchProfile()
@@ -132,7 +133,7 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
     )
   }
 
-  const requesterRatings = ratings.filter((r) => r.rating_type === 'requester')
+  const clientRatings = ratings.filter((r) => r.rating_type === 'client')
   const workerRatings = ratings.filter((r) => r.rating_type === 'worker')
 
   return (
@@ -214,14 +215,14 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
           {/* Tabs */}
           <div className="flex gap-4 mb-6 border-b border-white/10">
             <button
-              onClick={() => setActiveTab('requester')}
+              onClick={() => setActiveTab('client')}
               className={`pb-3 px-4 transition-colors ${
-                activeTab === 'requester'
+                activeTab === 'client'
                   ? 'border-b-2 border-purple-500 text-white'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              As Requester ({requesterRatings.length})
+              As Client ({clientRatings.length})
             </button>
             <button
               onClick={() => setActiveTab('worker')}
@@ -239,27 +240,27 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
           <div className="flex items-center gap-6 mb-8 p-6 bg-white/5 rounded-xl">
             <div>
               <div className="text-5xl font-bold mb-2">
-                {activeTab === 'requester'
-                  ? profile.rating_as_requester.toFixed(1)
+                {activeTab === 'client'
+                  ? profile.rating_as_client.toFixed(1)
                   : profile.rating_as_worker.toFixed(1)}
               </div>
               {renderStars(
-                activeTab === 'requester'
-                  ? Math.round(profile.rating_as_requester)
+                activeTab === 'client'
+                  ? Math.round(profile.rating_as_client)
                   : Math.round(profile.rating_as_worker)
               )}
             </div>
             <div className="text-gray-400">
               <div className="text-sm">Based on</div>
               <div className="text-2xl font-semibold">
-                {activeTab === 'requester' ? requesterRatings.length : workerRatings.length} reviews
+                {activeTab === 'client' ? clientRatings.length : workerRatings.length} reviews
               </div>
             </div>
           </div>
 
           {/* Reviews List */}
           <div className="space-y-4">
-            {(activeTab === 'requester' ? requesterRatings : workerRatings).map((rating) => (
+            {(activeTab === 'client' ? clientRatings : workerRatings).map((rating) => (
               <div key={rating.id} className="p-6 bg-white/5 rounded-xl">
                 <div className="flex items-start justify-between mb-3">
                   <div>
@@ -283,7 +284,7 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
               </div>
             ))}
 
-            {(activeTab === 'requester' ? requesterRatings : workerRatings).length === 0 && (
+            {(activeTab === 'client' ? clientRatings : workerRatings).length === 0 && (
               <div className="text-center py-12 text-gray-400">
                 No reviews yet as {activeTab}
               </div>
@@ -291,6 +292,7 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   )
 }

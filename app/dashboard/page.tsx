@@ -17,7 +17,7 @@ import {
   X
 } from 'lucide-react'
 import Link from 'next/link'
-import { getTasksByRequester, getSubmissionsByWorker, getUserByWallet, updateUsername } from '@/lib/database'
+import { getTasksByClient, getSubmissionsByWorker, getUserByWallet, updateUsername } from '@/lib/database'
 import toast from 'react-hot-toast'
 
 export default function Dashboard() {
@@ -50,7 +50,7 @@ export default function Dashboard() {
       setNewUsername(userData?.username || '')
       
       // Fetch tasks posted by user
-      const postedTasks = await getTasksByRequester(walletAddress)
+      const postedTasks = await getTasksByClient(walletAddress)
       
       // Fetch submissions by user
       const submissions = await getSubmissionsByWorker(walletAddress)
