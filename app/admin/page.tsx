@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Header } from '@/components/Header'
+import { AdminLayout } from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabase'
 import { TrendingUp, Users, Briefcase, DollarSign, Activity, CheckCircle } from 'lucide-react'
 
@@ -114,26 +114,22 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-white/10 rounded w-48 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                <div key={i} className="h-32 bg-white/10 rounded"></div>
-              ))}
-            </div>
+      <AdminLayout>
+        <div className="animate-pulse">
+          <div className="h-8 bg-white/10 rounded w-48 mb-8"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+              <div key={i} className="h-32 bg-white/10 rounded"></div>
+            ))}
           </div>
         </div>
-      </main>
+      </AdminLayout>
     )
   }
 
   return (
-    <main className="min-h-screen">
-      <Header />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout>
+      <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
           <p className="text-text-secondary">Platform analytics and insights</p>
@@ -269,6 +265,6 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
-    </main>
+    </AdminLayout>
   )
 }
