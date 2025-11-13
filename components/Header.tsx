@@ -1,10 +1,10 @@
 'use client'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { NotificationBell } from './NotificationBell'
+import { CustomWalletButton } from './CustomWalletButton'
 
 
 export function Header() {
@@ -103,15 +103,7 @@ export function Header() {
                   </Link>
                 </>
               )}
-              {mounted ? (
-                <div className="wallet-button-container scale-90 md:scale-100">
-                  <WalletMultiButton />
-                </div>
-              ) : (
-                <div className="gradient-primary text-white font-semibold px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base rounded-lg">
-                  Connect Wallet
-                </div>
-              )}
+              <CustomWalletButton />
               
               {/* Mobile Menu Button */}
               <button
