@@ -15,11 +15,60 @@ const montserrat = Montserrat({
 })
 
 export const metadata: Metadata = {
-  title: 'TaskBlitz - Solana Micro-Task Marketplace',
-  description: 'The first crypto-native micro-task marketplace on Solana. Post tasks, complete work, get paid instantly in crypto.',
-  keywords: 'solana, crypto, tasks, marketplace, blockchain, web3',
+  metadataBase: new URL('https://taskblitz.com'),
+  title: {
+    default: 'TaskBlitz - Solana-Powered Micro-Task Marketplace | Earn & Hire with Crypto',
+    template: '%s | TaskBlitz'
+  },
+  description: 'TaskBlitz is the leading blockchain-based micro-task platform. Post tasks, earn USDC, and connect with global talent on Solana. Fast, secure, and transparent.',
+  keywords: ['taskblitz', 'micro tasks', 'solana marketplace', 'crypto gigs', 'USDC payments', 'blockchain freelance', 'web3 jobs', 'decentralized marketplace', 'earn crypto', 'solana tasks'],
+  authors: [{ name: 'TaskBlitz' }],
+  creator: 'TaskBlitz',
+  publisher: 'TaskBlitz',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: '/favicon.ico',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://taskblitz.com',
+    siteName: 'TaskBlitz',
+    title: 'TaskBlitz - Solana-Powered Micro-Task Marketplace',
+    description: 'Post tasks, earn USDC, and connect with global talent on the Solana blockchain. Fast, secure, and transparent micro-task marketplace.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'TaskBlitz - Solana Micro-Task Marketplace',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TaskBlitz - Solana Micro-Task Marketplace',
+    description: 'Post tasks, earn USDC, and connect with global talent on Solana.',
+    creator: '@taskblitz',
+    images: ['/twitter-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://taskblitz.com',
   },
 }
 
@@ -29,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en-US" className="dark">
       <head>
         {/* Google Analytics */}
         <Script

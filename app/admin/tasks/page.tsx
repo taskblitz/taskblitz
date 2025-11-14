@@ -37,13 +37,33 @@ export default function AdminTasksPage() {
 
   const handleDelete = async (taskId: string) => {
     if (!publicKey) return
-    if (!confirm('Are you sure you want to delete this task?')) return
+    if (!confirm('Are you sure you want to delete this task? This will also delete all related submissions, transactions, and notifications.')) return
 
     const reason = prompt('Reason for deletion:')
     if (!reason) return
 
-    await deleteTask(taskId, publicKey.toString(), reason)
-    loadTasks()
+    try {
+      const response = await fetch('/api/admin/delete-task', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          taskId,
+          adminWallet: publicKey.toString(),
+          reason
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || data.error) {
+        alert(`Failed to delete task: ${data.error}`)
+      } else {
+        alert('Task deleted successfully!')
+        loadTasks()
+      }
+    } catch (error: any) {
+      alert(`Failed to delete task: ${error.message}`)
+    }
   }
 
   const handlePause = async (taskId: string) => {

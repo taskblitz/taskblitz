@@ -78,26 +78,31 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/faq" className="text-text-secondary hover:text-white transition-colors text-sm flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-text-secondary hover:text-white transition-colors text-sm">
+                  About TaskBlitz
+                </Link>
+              </li>
+              <li>
+                <Link href="/changelog" className="text-text-secondary hover:text-white transition-colors text-sm">
+                  Changelog
+                </Link>
+              </li>
+              <li>
                 <Link href="/developers" className="text-text-secondary hover:text-white transition-colors text-sm flex items-center gap-2">
                   <Code className="w-4 h-4" />
                   API & Developers
                 </Link>
               </li>
               <li>
-                <Link href="/docs/how-it-works" className="text-text-secondary hover:text-white transition-colors text-sm flex items-center gap-2">
-                  <HelpCircle className="w-4 h-4" />
-                  How It Works
-                </Link>
-              </li>
-              <li>
                 <Link href="/docs/security" className="text-text-secondary hover:text-white transition-colors text-sm flex items-center gap-2">
                   <Shield className="w-4 h-4" />
                   Security & Escrow
-                </Link>
-              </li>
-              <li>
-                <Link href="/feedback" className="text-text-secondary hover:text-white transition-colors text-sm">
-                  Feedback & Support
                 </Link>
               </li>
             </ul>

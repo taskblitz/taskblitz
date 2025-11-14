@@ -1,12 +1,65 @@
-'use client'
+import { Metadata } from 'next'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
 import { FileText, Users, CheckCircle, DollarSign, MessageCircle, Star } from 'lucide-react'
 
+export const metadata: Metadata = {
+  title: 'How TaskBlitz Works - Complete Guide',
+  description: 'Learn how TaskBlitz works step-by-step. From posting tasks to instant USDC payments on Solana blockchain. Complete guide for clients and workers.',
+  alternates: {
+    canonical: 'https://taskblitz.com/docs/how-it-works',
+  },
+}
+
 export default function HowItWorksPage() {
+  // HowTo Schema for rich snippets
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Use TaskBlitz - Complete Guide",
+    "description": "Learn how to post tasks and earn USDC on TaskBlitz, the Solana-powered micro-task marketplace",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Connect Your Wallet",
+        "text": "Connect your Solana wallet (Phantom, Solflare, etc.) to TaskBlitz. Your wallet is your identity - no email or password needed.",
+        "url": "https://taskblitz.com/docs/getting-started"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Browse or Post Tasks",
+        "text": "Browse available tasks in the marketplace or post your own task with a USDC payment. Funds are locked in smart contract escrow for security.",
+        "url": "https://taskblitz.com/dashboard"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Complete the Work",
+        "text": "Workers complete tasks and submit proof of completion. Clients review the work and can request revisions if needed.",
+        "url": "https://taskblitz.com/docs/how-it-works"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Get Paid Instantly",
+        "text": "Once approved, the smart contract automatically releases USDC payment to the worker's wallet in seconds. No waiting period.",
+        "url": "https://taskblitz.com/docs/payments"
+      }
+    ],
+    "totalTime": "PT5M"
+  }
+
   return (
     <main className="min-h-screen">
       <Header />
+      
+      {/* JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link href="/docs" className="text-purple-400 hover:text-purple-300 text-sm mb-6 inline-block">
           ← Back to Documentation

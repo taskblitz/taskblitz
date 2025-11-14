@@ -8,9 +8,9 @@ export async function isAdmin(walletAddress: string): Promise<boolean> {
     .from('admin_users')
     .select('id')
     .eq('wallet_address', walletAddress)
-    .single()
+    .maybeSingle()
   
-  console.log('Admin check result:', { data, error })
+  console.log('Admin check result:', { data, error, hasData: !!data })
   
   if (error) {
     console.error('Admin check error:', error)
@@ -156,14 +156,60 @@ export async function updateUserReputation(
 
 // Task Management
 export async function deleteTask(taskId: string, adminWallet: string, reason: string) {
-  const { error } = await supabase
-    .from('tasks')
-    .delete()
-    .eq('id', taskId)
+  try {
+    // Delete related records first (these might have RLS issues too)
+    const { error: submissionsError } = await supabase
+      .from('submissions')
+      .delete()
+      .eq('task_id', taskId)
 
-  await logAdminActivity(adminWallet, 'delete_task', 'task', taskId, { reason })
+    if (submissionsError) {
+      console.error('Delete submissions error:', submissionsError)
+    }
 
-  return { error }
+    const { error: transactionsError } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('task_id', taskId)
+
+    if (transactionsError) {
+      console.error('Delete transactions error:', transactionsError)
+    }
+
+    const { error: notificationsError } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('task_id', taskId)
+
+    if (notificationsError) {
+      console.error('Delete notifications error:', notificationsError)
+    }
+
+    // Now delete the task
+    const { error, data } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId)
+      .select()
+
+    console.log('Delete task result:', { error, data, taskId })
+
+    if (error) {
+      console.error('Delete task error:', error)
+      return { success: false, error: `Database error: ${error.message}` }
+    }
+
+    if (!data || data.length === 0) {
+      return { success: false, error: 'Task not found or RLS policy blocking deletion. Check Supabase RLS policies.' }
+    }
+
+    await logAdminActivity(adminWallet, 'delete_task', 'task', taskId, { reason })
+
+    return { success: true, error: null }
+  } catch (error: any) {
+    console.error('Failed to delete task:', error)
+    return { success: false, error: error.message || 'Failed to delete task' }
+  }
 }
 
 export async function pauseTask(taskId: string, adminWallet: string) {
