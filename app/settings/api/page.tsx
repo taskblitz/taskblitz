@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { getUserApiKeys, generateApiKey, revokeApiKey, getApiUsageStats } from '@/lib/api-rate-limit'
 import { ApiRateLimit, ApiUsage } from '@/types/advanced-features'
@@ -86,9 +85,7 @@ export default function ApiSettingsPage() {
             <h1 className="text-3xl font-bold mb-4">API Settings</h1>
             <p className="text-text-secondary mb-6">Connect your wallet to manage API keys</p>
           </div>
-        </div>
-        <Footer />
-      </main>
+        </div>      </main>
     )
   }
 
@@ -238,8 +235,6 @@ export default function ApiSettingsPage() {
             View API Documentation
           </a>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

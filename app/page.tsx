@@ -6,7 +6,6 @@ import { MarketplaceFilters } from '@/components/MarketplaceFilters'
 import { MarketplaceStats } from '@/components/MarketplaceStats'
 import { QuickActions } from '@/components/QuickActions'
 import { CategoryChips } from '@/components/CategoryChips'
-import { Footer } from '@/components/Footer'
 
 interface Filters {
   categories: string[]
@@ -129,7 +128,6 @@ export default function Marketplace() {
         </div>
       </div>
       <QuickActions />
-      <Footer />
     </main>
   )
 }

@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { getUserWebhooks, createWebhook, deleteWebhook, getWebhookDeliveries } from '@/lib/webhooks'
 import { Webhook, WebhookDelivery } from '@/types/advanced-features'
@@ -93,9 +92,7 @@ export default function WebhooksPage() {
             <h1 className="text-3xl font-bold mb-4">Webhooks</h1>
             <p className="text-text-secondary mb-6">Connect your wallet to manage webhooks</p>
           </div>
-        </div>
-        <Footer />
-      </main>
+        </div>      </main>
     )
   }
 
@@ -293,8 +290,6 @@ export default function WebhooksPage() {
             </div>
           </div>
         )}
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

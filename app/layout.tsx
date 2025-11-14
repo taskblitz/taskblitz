@@ -5,6 +5,7 @@ import { WalletContextProvider } from '@/components/WalletProvider'
 import { UserProvider } from '@/contexts/UserContext'
 import { Toaster } from 'react-hot-toast'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
+import { Footer } from '@/components/Footer'
 import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
   title: 'TaskBlitz - Solana Micro-Task Marketplace',
   description: 'The first crypto-native micro-task marketplace on Solana. Post tasks, complete work, get paid instantly in crypto.',
   keywords: 'solana, crypto, tasks, marketplace, blockchain, web3',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
@@ -52,13 +56,14 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${inter.className} ${montserrat.variable} min-h-screen`}>
+      <body className={`${inter.className} ${montserrat.variable} min-h-screen flex flex-col`}>
         <WalletContextProvider>
           <UserProvider>
             <AnnouncementBanner />
-            <div className="pt-12"> {/* Add padding-top for fixed banner */}
+            <div className="pt-12 flex-1 flex flex-col"> {/* Add padding-top for fixed banner */}
               {children}
             </div>
+            <Footer />
             <Toaster 
               position="top-right"
               toastOptions={{

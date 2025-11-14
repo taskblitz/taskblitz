@@ -78,6 +78,13 @@ export function Header() {
                       </Link>
                       <div className="border-t border-white/10 my-2" />
                       <Link 
+                        href="/settings" 
+                        className="block text-white hover:bg-purple-600/80 transition-colors py-2.5 px-4"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        Settings
+                      </Link>
+                      <Link 
                         href="/feedback" 
                         className="block text-white hover:bg-purple-600/80 transition-colors py-2.5 px-4"
                         onClick={() => setUserMenuOpen(false)}
@@ -160,6 +167,13 @@ export function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link 
+                    href="/settings" 
+                    className="text-white hover:bg-white/10 transition-colors py-2.5 px-4"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Settings
                   </Link>
                   <Link 
                     href="/feedback" 

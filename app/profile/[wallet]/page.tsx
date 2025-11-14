@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { Star, Briefcase, CheckCircle, TrendingUp, Calendar } from 'lucide-react'
@@ -292,7 +291,6 @@ export default function ProfilePage({ params }: { params: { wallet: string } }) 
           </div>
         </div>
       </div>
-      <Footer />
     </main>
   )
 }

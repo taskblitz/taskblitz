@@ -413,7 +413,7 @@ export function PostTaskForm() {
           <div>
             <label className="block text-sm font-medium mb-3">Submission Type *</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label className="cursor-pointer">
+              <label className="cursor-pointer block">
                 <input
                   type="radio"
                   name="submissionType"
@@ -422,18 +422,25 @@ export function PostTaskForm() {
                   onChange={(e) => handleInputChange('submissionType', e.target.value)}
                   className="sr-only"
                 />
-                <div className={`glass-card p-4 text-center border-2 transition-all ${
+                <div className={`glass-card p-4 text-center border-2 transition-all relative ${
                   formData.submissionType === 'text' 
-                    ? 'border-purple-500 bg-purple-500/20' 
-                    : 'border-white/20 hover:border-purple-400'
+                    ? 'border-purple-500 bg-purple-500/30 shadow-lg shadow-purple-500/20 scale-105' 
+                    : 'border-white/20 hover:border-purple-400 hover:bg-white/5'
                 }`}>
-                  <FileText className="w-6 h-6 mx-auto mb-2 text-purple-400" />
-                  <div className="font-medium">Text Response</div>
+                  {formData.submissionType === 'text' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <FileText className={`w-6 h-6 mx-auto mb-2 ${formData.submissionType === 'text' ? 'text-purple-300' : 'text-purple-400'}`} />
+                  <div className={`font-medium ${formData.submissionType === 'text' ? 'text-white' : ''}`}>Text Response</div>
                   <div className="text-xs text-text-muted mt-1">Workers type their response</div>
                 </div>
               </label>
 
-              <label className="cursor-pointer">
+              <label className="cursor-pointer block">
                 <input
                   type="radio"
                   name="submissionType"
@@ -442,18 +449,25 @@ export function PostTaskForm() {
                   onChange={(e) => handleInputChange('submissionType', e.target.value)}
                   className="sr-only"
                 />
-                <div className={`glass-card p-4 text-center border-2 transition-all ${
+                <div className={`glass-card p-4 text-center border-2 transition-all relative ${
                   formData.submissionType === 'url' 
-                    ? 'border-purple-500 bg-purple-500/20' 
-                    : 'border-white/20 hover:border-purple-400'
+                    ? 'border-cyan-500 bg-cyan-500/30 shadow-lg shadow-cyan-500/20 scale-105' 
+                    : 'border-white/20 hover:border-cyan-400 hover:bg-white/5'
                 }`}>
-                  <Clock className="w-6 h-6 mx-auto mb-2 text-purple-400" />
-                  <div className="font-medium">URL/Link</div>
+                  {formData.submissionType === 'url' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <Clock className={`w-6 h-6 mx-auto mb-2 ${formData.submissionType === 'url' ? 'text-cyan-300' : 'text-purple-400'}`} />
+                  <div className={`font-medium ${formData.submissionType === 'url' ? 'text-white' : ''}`}>URL/Link</div>
                   <div className="text-xs text-text-muted mt-1">Social media posts, websites</div>
                 </div>
               </label>
 
-              <label className="cursor-pointer">
+              <label className="cursor-pointer block">
                 <input
                   type="radio"
                   name="submissionType"
@@ -462,13 +476,20 @@ export function PostTaskForm() {
                   onChange={(e) => handleInputChange('submissionType', e.target.value)}
                   className="sr-only"
                 />
-                <div className={`glass-card p-4 text-center border-2 transition-all ${
+                <div className={`glass-card p-4 text-center border-2 transition-all relative ${
                   formData.submissionType === 'file' 
-                    ? 'border-purple-500 bg-purple-500/20' 
-                    : 'border-white/20 hover:border-purple-400'
+                    ? 'border-green-500 bg-green-500/30 shadow-lg shadow-green-500/20 scale-105' 
+                    : 'border-white/20 hover:border-green-400 hover:bg-white/5'
                 }`}>
-                  <Upload className="w-6 h-6 mx-auto mb-2 text-purple-400" />
-                  <div className="font-medium">File Upload</div>
+                  {formData.submissionType === 'file' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <Upload className={`w-6 h-6 mx-auto mb-2 ${formData.submissionType === 'file' ? 'text-green-300' : 'text-purple-400'}`} />
+                  <div className={`font-medium ${formData.submissionType === 'file' ? 'text-white' : ''}`}>File Upload</div>
                   <div className="text-xs text-text-muted mt-1">Images, documents, screenshots</div>
                 </div>
               </label>

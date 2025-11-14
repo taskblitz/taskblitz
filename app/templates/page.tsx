@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { getUserTemplates, getPublicTemplates, createTaskTemplate, deleteTemplate } from '@/lib/task-templates'
 import { TaskTemplate } from '@/types/advanced-features'
@@ -167,8 +166,6 @@ export default function TemplatesPage() {
             </div>
           )}
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

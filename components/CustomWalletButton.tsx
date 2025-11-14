@@ -3,10 +3,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useEffect, useState, useRef } from 'react'
 import { Copy, LogOut, RefreshCw, Check } from 'lucide-react'
+import { useUser } from '@/contexts/UserContext'
 
 export function CustomWalletButton() {
   const { wallet, connect, disconnect, connecting, connected, publicKey } = useWallet()
   const { setVisible } = useWalletModal()
+  const { user } = useUser()
   const [mounted, setMounted] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -83,7 +85,7 @@ export function CustomWalletButton() {
             {wallet?.adapter.icon && (
               <img src={wallet.adapter.icon} alt={wallet.adapter.name} className="w-5 h-5" />
             )}
-            {formatAddress(publicKey.toBase58())}
+            {user?.username || formatAddress(publicKey.toBase58())}
           </>
         ) : (
           'Connect Wallet'

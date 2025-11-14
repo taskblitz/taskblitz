@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { FileText, Users, CheckCircle, DollarSign, MessageCircle, Star } from 'lucide-react'
 
@@ -271,8 +270,6 @@ export default function HowItWorksPage() {
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

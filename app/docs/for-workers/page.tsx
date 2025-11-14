@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 
 export default function ForWorkersPage() {
@@ -173,8 +172,6 @@ export default function ForWorkersPage() {
             <p>💡 <strong>Join the Discord</strong> community to learn from other successful workers</p>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

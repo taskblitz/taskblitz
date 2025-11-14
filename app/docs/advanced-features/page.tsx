@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { FileText, Upload, Zap, Key, BarChart3, Webhook } from 'lucide-react'
 
@@ -251,8 +250,6 @@ export default function AdvancedFeaturesPage() {
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

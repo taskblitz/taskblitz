@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 
 export default function PrivacyPage() {
   return (
@@ -195,8 +194,6 @@ export default function PrivacyPage() {
             </p>
           </section>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

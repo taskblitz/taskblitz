@@ -31,22 +31,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // For now, just create a mock user to avoid database issues
-      const mockUser = {
-        id: 'mock-user-id',
-        wallet_address: publicKey.toString(),
-        username: null,
-        username_last_changed: null,
-        role: 'both' as const,
-        total_spent: 0,
-        total_earned: 0,
-        tasks_posted: 0,
-        tasks_completed: 0,
-        reputation_score: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      setUser(mockUser)
+      const userData = await getOrCreateUser(publicKey.toString())
+      setUser(userData)
     } catch (error) {
       console.error('Error fetching user:', error)
       setUser(null)

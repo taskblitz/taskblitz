@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 
 export default function ForClientsPage() {
@@ -228,8 +227,6 @@ export default function ForClientsPage() {
             <p>💡 <strong>Start small</strong> - Test workers with smaller tasks before big projects</p>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

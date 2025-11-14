@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { getAdvancedAnalytics } from '@/lib/advanced-analytics'
 import { AnalyticsData } from '@/types/advanced-features'
@@ -45,9 +44,7 @@ export default function AnalyticsPage() {
             <h1 className="text-3xl font-bold mb-4">Advanced Analytics</h1>
             <p className="text-text-secondary mb-6">Connect your wallet to view your analytics</p>
           </div>
-        </div>
-        <Footer />
-      </main>
+        </div>      </main>
     )
   }
 
@@ -236,8 +233,6 @@ export default function AnalyticsPage() {
             </div>
           </div>
         )}
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

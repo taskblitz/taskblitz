@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { createBulkTaskJob, getUserBulkJobs, processBulkTaskJob } from '@/lib/bulk-tasks'
 import { BulkTaskJob } from '@/types/advanced-features'
@@ -87,9 +86,7 @@ export default function BulkTasksPage() {
             <h1 className="text-3xl font-bold mb-4">Bulk Task Creation</h1>
             <p className="text-text-secondary mb-6">Connect your wallet to create multiple tasks at once</p>
           </div>
-        </div>
-        <Footer />
-      </main>
+        </div>      </main>
     )
   }
 
@@ -220,8 +217,6 @@ export default function BulkTasksPage() {
             </div>
           )}
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

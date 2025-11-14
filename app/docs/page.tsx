@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { FileText, Zap, Shield, DollarSign, Users, Code, TrendingUp, Bell } from 'lucide-react'
 
@@ -134,8 +133,6 @@ export default function DocsPage() {
             </a>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

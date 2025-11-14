@@ -1,6 +1,5 @@
 'use client'
 import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
 import Link from 'next/link'
 import { Shield, Lock, Key, AlertTriangle, CheckCircle } from 'lucide-react'
 
@@ -228,8 +227,6 @@ export default function SecurityPage() {
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
-    </main>
+      </div>    </main>
   )
 }

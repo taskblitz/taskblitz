@@ -23,10 +23,42 @@ export default function FeedbackPage() {
   })
 
   const feedbackTypes = [
-    { value: 'suggestion', label: 'Suggestion', icon: LightningBoltIcon, color: 'text-yellow-400' },
-    { value: 'bug', label: 'Bug Report', icon: ExclamationTriangleIcon, color: 'text-red-400' },
-    { value: 'feature', label: 'Feature Request', icon: MagicWandIcon, color: 'text-purple-400' },
-    { value: 'other', label: 'Other', icon: ChatBubbleIcon, color: 'text-cyan-400' }
+    { 
+      value: 'suggestion', 
+      label: 'Suggestion', 
+      icon: LightningBoltIcon, 
+      color: 'text-yellow-400',
+      activeColor: 'border-yellow-500 bg-yellow-500/30 shadow-lg shadow-yellow-500/20',
+      hoverColor: 'hover:border-yellow-400 hover:bg-yellow-500/10',
+      checkmarkBg: 'bg-yellow-500'
+    },
+    { 
+      value: 'bug', 
+      label: 'Bug Report', 
+      icon: ExclamationTriangleIcon, 
+      color: 'text-red-400',
+      activeColor: 'border-red-500 bg-red-500/30 shadow-lg shadow-red-500/20',
+      hoverColor: 'hover:border-red-400 hover:bg-red-500/10',
+      checkmarkBg: 'bg-red-500'
+    },
+    { 
+      value: 'feature', 
+      label: 'Feature Request', 
+      icon: MagicWandIcon, 
+      color: 'text-purple-400',
+      activeColor: 'border-purple-500 bg-purple-500/30 shadow-lg shadow-purple-500/20',
+      hoverColor: 'hover:border-purple-400 hover:bg-purple-500/10',
+      checkmarkBg: 'bg-purple-500'
+    },
+    { 
+      value: 'other', 
+      label: 'Other', 
+      icon: ChatBubbleIcon, 
+      color: 'text-cyan-400',
+      activeColor: 'border-cyan-500 bg-cyan-500/30 shadow-lg shadow-cyan-500/20',
+      hoverColor: 'hover:border-cyan-400 hover:bg-cyan-500/10',
+      checkmarkBg: 'bg-cyan-500'
+    }
   ]
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -132,15 +164,22 @@ export default function FeedbackPage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, type: type.value })}
                     className={`
-                      glass-card p-4 rounded-xl transition-all
+                      glass-card p-4 rounded-xl transition-all border-2 relative
                       ${isSelected 
-                        ? 'bg-purple-500/20 border-purple-500' 
-                        : 'hover:bg-white/10'
+                        ? `${type.activeColor} scale-105` 
+                        : `border-white/20 ${type.hoverColor}`
                       }
                     `}
                   >
-                    <Icon className={`w-6 h-6 mx-auto mb-2 ${type.color}`} />
-                    <p className="text-xs font-medium">{type.label}</p>
+                    {isSelected && (
+                      <div className={`absolute top-2 right-2 w-5 h-5 ${type.checkmarkBg} rounded-full flex items-center justify-center`}>
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    <Icon className={`w-6 h-6 mx-auto mb-2 ${isSelected ? type.color.replace('400', '300') : type.color}`} />
+                    <p className={`text-xs font-medium ${isSelected ? 'text-white' : ''}`}>{type.label}</p>
                   </button>
                 )
               })}
