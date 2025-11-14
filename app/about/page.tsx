@@ -22,8 +22,7 @@ export default function AboutPage() {
     "foundingDate": "2024",
     "sameAs": [
       "https://twitter.com/taskblitz",
-      "https://github.com/taskblitz",
-      "https://discord.gg/taskblitz"
+      "https://github.com/taskblitz"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
@@ -248,13 +247,6 @@ export default function AboutPage() {
               <div>
                 <div className="font-semibold text-white">Twitter</div>
                 <div className="text-text-muted text-sm">@taskblitz</div>
-              </div>
-            </a>
-            <a href="https://discord.gg/taskblitz" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 glass-card rounded-lg hover:border-purple-400 transition-colors">
-              <span className="text-2xl">💬</span>
-              <div>
-                <div className="font-semibold text-white">Discord</div>
-                <div className="text-text-muted text-sm">Join our community</div>
               </div>
             </a>
             <a href="https://github.com/taskblitz" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 glass-card rounded-lg hover:border-cyan-400 transition-colors">

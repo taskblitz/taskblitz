@@ -124,7 +124,7 @@ export default function WebhooksPage() {
               <h3 className="font-semibold mb-2">What are webhooks?</h3>
               <p className="text-text-secondary text-sm">
                 Webhooks send HTTP POST requests to your specified URL when events occur (task completed, payment received, etc.). 
-                Perfect for integrating TaskBlitz with your own systems, Slack, Discord, or automation tools.
+                Perfect for integrating TaskBlitz with your own systems, Slack, or automation tools.
               </p>
             </div>
           </div>

@@ -176,14 +176,6 @@ export default function ChangelogPage() {
             >
               Follow on Twitter
             </a>
-            <a 
-              href="https://discord.gg/taskblitz" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              Join Discord
-            </a>
           </div>
         </div>
       </div>

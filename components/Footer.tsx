@@ -28,10 +28,6 @@ export function Footer() {
                 title="X402 Payment SDK">
                 <Github className="w-5 h-5" />
               </a>
-              <a href="https://discord.gg/taskblitz" target="_blank" rel="noopener noreferrer"
-                className="text-text-secondary hover:text-purple-400 transition-colors">
-                <MessageCircle className="w-5 h-5" />
-              </a>
             </div>
           </div>
 

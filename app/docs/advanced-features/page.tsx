@@ -147,7 +147,7 @@ export default function AdvancedFeaturesPage() {
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-3">Webhooks & Integrations</h2>
               <p className="text-text-secondary mb-4">
-                Receive real-time notifications when events occur. Integrate TaskBlitz with Slack, Discord, or your own systems.
+                Receive real-time notifications when events occur. Integrate TaskBlitz with Slack or your own systems.
               </p>
               
               <div className="bg-black/30 p-4 rounded-lg mb-4">

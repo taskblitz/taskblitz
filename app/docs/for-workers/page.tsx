@@ -169,7 +169,7 @@ export default function ForWorkersPage() {
             <p>💡 <strong>Ask for clarification</strong> before starting if requirements are vague</p>
             <p>💡 <strong>Over-deliver</strong> when possible. Exceeding expectations builds loyal clients</p>
             <p>💡 <strong>Track your time</strong> to understand your effective hourly rate</p>
-            <p>💡 <strong>Join the Discord</strong> community to learn from other successful workers</p>
+            <p>💡 <strong>Follow us on X</strong> to stay updated with platform news and tips</p>
           </div>
         </div>
       </div>    </main>

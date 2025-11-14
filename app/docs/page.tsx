@@ -128,9 +128,6 @@ export default function DocsPage() {
             <Link href="/feedback" className="btn-primary">
               Contact Support
             </Link>
-            <a href="https://discord.gg/taskblitz" target="_blank" rel="noopener noreferrer" className="btn-secondary">
-              Join Discord
-            </a>
           </div>
         </div>
       </div>    </main>
