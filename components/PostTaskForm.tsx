@@ -21,6 +21,7 @@ interface TaskFormData {
   requirements: string[]
   exampleSubmission: string
   currency: 'SOL' | 'USDC'
+  taskMode: 'open' | 'application'
 }
 
 export function PostTaskForm() {
@@ -41,7 +42,8 @@ export function PostTaskForm() {
     submissionType: 'url',
     requirements: [''],
     exampleSubmission: '',
-    currency: 'SOL'
+    currency: 'SOL',
+    taskMode: 'open'
   })
 
   useEffect(() => {
@@ -150,7 +152,8 @@ export function PostTaskForm() {
         requesterWallet: publicKey.toString(),
         requirements: cleanRequirements,
         exampleSubmission: formData.exampleSubmission.trim() || undefined,
-        currency: formData.currency
+        currency: formData.currency,
+        taskMode: formData.taskMode
       }, async (taskId: string) => {
         // Lock funds in escrow using Anchor
         toast.loading(`Locking ${formData.currency} in escrow...`, { id: loadingToast })
@@ -267,6 +270,64 @@ export function PostTaskForm() {
                 <option value="Medium" className="bg-gray-800">Medium</option>
                 <option value="Hard" className="bg-gray-800">Hard</option>
               </select>
+            </div>
+          </div>
+
+          {/* Task Mode Selection */}
+          <div>
+            <label className="block text-sm font-medium mb-3">Who Can Work on This Task? *</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <label className="cursor-pointer block">
+                <input
+                  type="radio"
+                  name="taskMode"
+                  value="open"
+                  checked={formData.taskMode === 'open'}
+                  onChange={(e) => handleInputChange('taskMode', e.target.value)}
+                  className="sr-only"
+                />
+                <div className={`glass-card p-4 border-2 transition-all relative ${
+                  formData.taskMode === 'open' 
+                    ? 'border-green-500 bg-green-500/30 shadow-lg shadow-green-500/20 scale-105' 
+                    : 'border-white/20 hover:border-green-400 hover:bg-green-500/10'
+                }`}>
+                  {formData.taskMode === 'open' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className={`font-medium mb-1 ${formData.taskMode === 'open' ? 'text-white' : ''}`}>🚀 Open Task (Recommended)</div>
+                  <div className="text-xs text-text-muted">Anyone can submit work immediately. Fast and simple for micro-tasks.</div>
+                </div>
+              </label>
+
+              <label className="cursor-pointer block">
+                <input
+                  type="radio"
+                  name="taskMode"
+                  value="application"
+                  checked={formData.taskMode === 'application'}
+                  onChange={(e) => handleInputChange('taskMode', e.target.value)}
+                  className="sr-only"
+                />
+                <div className={`glass-card p-4 border-2 transition-all relative ${
+                  formData.taskMode === 'application' 
+                    ? 'border-purple-500 bg-purple-500/30 shadow-lg shadow-purple-500/20 scale-105' 
+                    : 'border-white/20 hover:border-purple-400 hover:bg-purple-500/10'
+                }`}>
+                  {formData.taskMode === 'application' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <div className={`font-medium mb-1 ${formData.taskMode === 'application' ? 'text-white' : ''}`}>✋ Application Required</div>
+                  <div className="text-xs text-text-muted">Workers apply first. You approve who can work. Better quality control.</div>
+                </div>
+              </label>
             </div>
           </div>
         </div>

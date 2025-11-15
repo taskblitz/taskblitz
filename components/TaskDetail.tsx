@@ -10,6 +10,8 @@ import { useUser } from '@/contexts/UserContext'
 import toast from 'react-hot-toast'
 import { FileUpload } from './FileUpload'
 import { UsernameLink } from './UsernameLink'
+import { ApplicationButton } from './ApplicationButton'
+import { ApplicationsManager } from './ApplicationsManager'
 
 interface TaskDetailProps {
   taskId: string
@@ -64,6 +66,7 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
   const [submissionFileType, setSubmissionFileType] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [canSubmit, setCanSubmit] = useState(false)
 
   const fetchTask = useCallback(async () => {
     try {
@@ -309,12 +312,26 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
                 </p>
               </div>
             ) : task.status === 'open' && task.workersCompleted < task.workersNeeded ? (
-              <button 
-                onClick={handleStartTask}
-                className="w-full gradient-primary text-white font-semibold py-3 px-6 rounded-xl hover:scale-105 transition-transform"
-              >
-                Complete This Task
-              </button>
+              <>
+                {/* Application Button for application-based tasks */}
+                {task.task_mode === 'application' && !canSubmit && (
+                  <ApplicationButton
+                    taskId={task.id}
+                    taskMode={task.task_mode}
+                    onApproved={() => setCanSubmit(true)}
+                  />
+                )}
+                
+                {/* Submit button - show for open tasks OR approved application tasks */}
+                {(task.task_mode === 'open' || canSubmit) && (
+                  <button 
+                    onClick={handleStartTask}
+                    className="w-full gradient-primary text-white font-semibold py-3 px-6 rounded-xl hover:scale-105 transition-transform"
+                  >
+                    Complete This Task
+                  </button>
+                )}
+              </>
             ) : task.status === 'completed' || task.workersCompleted >= task.workersNeeded ? (
               <button 
                 disabled
@@ -341,6 +358,14 @@ export function TaskDetail({ taskId }: TaskDetailProps) {
           <p className="text-text-secondary whitespace-pre-line">{task.description}</p>
         </div>
       </div>
+
+      {/* Applications Manager - Only show to task owner for application-based tasks */}
+      {task.task_mode === 'application' && publicKey && task.requesterWallet === publicKey.toString() && (
+        <ApplicationsManager 
+          taskId={task.id}
+          taskTitle={task.title}
+        />
+      )}
 
       {/* Requirements and Submission Info */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

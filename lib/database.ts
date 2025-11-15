@@ -255,6 +255,7 @@ export async function createTask(
     exampleSubmission?: string
     requesterWallet: string
     currency?: 'SOL' | 'USDC'
+    taskMode?: 'open' | 'application'
   },
   onChainCreation?: (taskId: string) => Promise<string>
 ) {
@@ -283,7 +284,8 @@ export async function createTask(
       submission_type: taskData.submissionType,
       requirements: taskData.requirements,
       example_submission: taskData.exampleSubmission || null,
-      currency: taskData.currency || 'SOL'
+      currency: taskData.currency || 'SOL',
+      task_mode: taskData.taskMode || 'open'
     }
 
     const { data, error } = await supabase
