@@ -98,7 +98,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { href: '/admin/disputes', icon: AlertTriangle, label: 'Disputes' },
     { href: '/admin/announcements', icon: Megaphone, label: 'Announcements' },
     { href: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-    { href: '/admin/settings', icon: Settings, label: 'Settings' },
+    { href: '/admin/platform-settings', icon: Settings, label: 'Platform Settings' },
+    { href: '/admin/settings', icon: Shield, label: 'Admin Users' },
   ]
 
   return (

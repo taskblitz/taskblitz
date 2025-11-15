@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react'
 import { AdminLayout } from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabase'
-import { TrendingUp, Users, Briefcase, DollarSign, Activity, CheckCircle } from 'lucide-react'
+import { TrendingUp, Users, Briefcase, DollarSign, Activity, CheckCircle, Wallet, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 interface PlatformStats {
   totalUsers: number
@@ -21,10 +22,12 @@ export default function AdminPage() {
   const [stats, setStats] = useState<PlatformStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [recentTasks, setRecentTasks] = useState<any[]>([])
+  const [platformWallet, setPlatformWallet] = useState<string>('')
 
   useEffect(() => {
     fetchStats()
     fetchRecentTasks()
+    fetchPlatformWallet()
   }, [])
 
   const fetchStats = async () => {
@@ -112,6 +115,16 @@ export default function AdminPage() {
     setRecentTasks(data || [])
   }
 
+  const fetchPlatformWallet = async () => {
+    const { data } = await supabase
+      .from('platform_settings')
+      .select('setting_value')
+      .eq('setting_key', 'platform_wallet_address')
+      .single()
+
+    setPlatformWallet(data?.setting_value || process.env.NEXT_PUBLIC_PLATFORM_WALLET || 'Not configured')
+  }
+
   if (loading) {
     return (
       <AdminLayout>
@@ -131,8 +144,38 @@ export default function AdminPage() {
     <AdminLayout>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-text-secondary">Platform analytics and insights</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+              <p className="text-text-secondary">Platform analytics and insights</p>
+            </div>
+            <Link 
+              href="/admin/platform-settings"
+              className="flex items-center gap-2 gradient-primary text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform"
+            >
+              <Settings className="w-4 h-4" />
+              Platform Settings
+            </Link>
+          </div>
+        </div>
+
+        {/* Platform Wallet Info */}
+        <div className="glass-card p-6 mb-8 bg-purple-500/10 border-purple-500/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Wallet className="w-8 h-8 text-purple-400" />
+              <div>
+                <h3 className="text-lg font-bold text-white">Platform Wallet</h3>
+                <p className="text-sm text-text-secondary font-mono">{platformWallet}</p>
+              </div>
+            </div>
+            <Link 
+              href="/admin/platform-settings"
+              className="text-sm text-purple-300 hover:text-purple-200 underline"
+            >
+              Change Wallet
+            </Link>
+          </div>
         </div>
 
         {/* Stats Grid */}
