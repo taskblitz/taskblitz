@@ -37,7 +37,7 @@ const faqs = [
   },
   {
     question: "What fees does TaskBlitz charge?",
-    answer: "TaskBlitz charges a small platform fee on completed tasks to maintain and improve the service. Workers pay a 5% fee on earnings, and clients pay a 2.5% fee when posting tasks. These fees are clearly displayed before you confirm any transaction. There are no hidden fees or surprise charges."
+    answer: "TaskBlitz charges a platform fee on completed tasks to maintain and improve the service. Clients pay a 10% fee when posting tasks. There are no hidden fees or surprise charges."
   },
   {
     question: "How long does payment take?",
@@ -57,14 +57,14 @@ const faqs = [
   },
   {
     question: "What types of tasks can I post or complete on TaskBlitz?",
-    answer: "TaskBlitz supports a wide variety of micro-tasks including graphic design, writing, data entry, social media management, video editing, translation, research, testing, and much more. Tasks typically range from $5 to $500, though there's no strict limit. If it's a digital task that can be completed remotely, it belongs on TaskBlitz."
+    answer: "TaskBlitz supports a wide variety of micro-tasks including graphic design, writing, data entry, social media management, video editing, translation, research, testing, and much more. Tasks typically range from $0.50 to $50, though there's no strict limit. If it's a digital task that can be completed remotely, it belongs on TaskBlitz."
   },
   {
     question: "How do I build reputation on TaskBlitz?",
-    answer: "Your reputation on TaskBlitz is built through completed tasks and ratings. After each task, both the client and worker can leave a rating and review. These ratings are permanently recorded on the blockchain and cannot be faked or manipulated. A strong reputation helps you get more tasks and charge higher rates."
+    answer: "Your reputation on TaskBlitz is built through completed tasks and ratings. After each task, both the client and worker can leave a rating and review. These ratings are securely stored and linked to your wallet address, creating a transparent reputation history. A strong reputation helps you get more tasks and charge higher rates."
   },
   {
-    question: "What makes TaskBlitz different from Fiverr or Upwork?",
+    question: "What makes TaskBlitz different from Amazon MTurk and others?",
     answer: "TaskBlitz offers instant crypto payments (no waiting 14 days), lower fees than traditional platforms, complete transparency through blockchain technology, no chargebacks or payment fraud, global access without restrictions, and true ownership of your reputation data. Plus, all transactions are secured by smart contracts, not a centralized company."
   },
   {

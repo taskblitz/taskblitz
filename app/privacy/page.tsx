@@ -133,7 +133,7 @@ export default function PrivacyPage() {
               <li>Close your account</li>
             </ul>
             <p className="mt-2">
-              Note: Blockchain transactions cannot be deleted as they are permanently recorded on the blockchain.
+              Note: Blockchain transactions (payments, escrow) are permanently recorded on the Solana blockchain and cannot be deleted. However, ratings and reviews are stored in our database and can be managed according to our data retention policies.
             </p>
           </section>
 
